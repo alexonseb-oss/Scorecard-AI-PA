@@ -1,0 +1,970 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Scorecard — AI Performance Academy</title>
+<meta name="description" content="Finde in 4 Klicks heraus, wo du gerade mit KI stehst.">
+<meta property="og:title" content="Scorecard — AI Performance Academy">
+<meta property="og:description" content="Finde in 4 Klicks heraus, wo du gerade mit KI stehst.">
+<meta property="og:type" content="website">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%23FF1A1A'/><text x='16' y='24' text-anchor='middle' fill='white' font-family='system-ui' font-weight='900' font-size='22'>A</text></svg>">
+<style>
+  :root {
+    --bg: #0a0a0a;
+    --bg-card: #111111;
+    --bg-card-hover: #1a1a1a;
+    --gray: #767D8C;
+    --gray-light: #9DA3AF;
+    --gray-dark: #2a2a2a;
+    --white: #FFFFFF;
+    --white-muted: #E5E5E5;
+    --primary: #FF1A1A;
+    --primary-light: #FF4444;
+    --primary-dark: #CC1515;
+    --anfaenger: #22C55E;
+    --fortgeschritten: #F59E0B;
+    --experte: #EF4444;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--white-muted);
+    line-height: 1.6;
+    font-size: 15px;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+  ::selection { background: var(--primary); color: #fff; }
+
+  /* ===== Logo Bar ===== */
+  .logo-bar {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    background: rgba(10,10,10,0.92);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    padding: 12px 24px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    z-index: 100;
+    border-bottom: 1px solid var(--gray-dark);
+  }
+  .logo-mark {
+    width: 28px; height: 28px;
+    background: var(--primary);
+    border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    color: white; font-weight: 900; font-size: 16px;
+  }
+  .logo-bar .label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--gray-light);
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+
+  /* ===== Page-Wrapper ===== */
+  .stage {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 80px 24px 40px;
+  }
+  .frame {
+    width: 100%;
+    max-width: 880px;
+    background: var(--bg-card);
+    border: 1px solid var(--gray-dark);
+    border-radius: 20px;
+    padding: 56px 56px 56px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+    position: relative;
+  }
+
+  /* ===== Screens (only one active) ===== */
+  .screen { display: none; animation: fadeIn 0.32s ease; }
+  .screen.active { display: block; }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ===== Progress ===== */
+  .progress {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 36px;
+  }
+  .progress .step {
+    font-size: 11px;
+    color: var(--gray);
+    font-weight: 700;
+    white-space: nowrap;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+  }
+  .progress .bar {
+    flex: 1;
+    height: 4px;
+    background: var(--gray-dark);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .progress .fill {
+    height: 100%;
+    background: var(--primary);
+    transition: width 0.4s cubic-bezier(.4,0,.2,1);
+    border-radius: 2px;
+  }
+
+  /* ===== Question heading ===== */
+  .q-heading {
+    font-size: clamp(1.7rem, 3.6vw, 2.5rem);
+    font-weight: 900;
+    color: var(--white);
+    letter-spacing: -0.02em;
+    line-height: 1.15;
+    margin: 0 0 14px;
+  }
+  .q-heading .accent { color: var(--primary); }
+  .q-sub {
+    font-size: 15px;
+    color: var(--gray-light);
+    margin: 0 0 36px;
+    max-width: 600px;
+    font-weight: 400;
+  }
+
+  /* ===== Q1 Splitter cards ===== */
+  .answer-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+  .answer-card {
+    background: var(--bg-card);
+    border: 2px solid var(--gray-dark);
+    border-radius: 16px;
+    padding: 28px 22px;
+    cursor: pointer;
+    transition: all 0.25s;
+    text-align: left;
+    font-family: inherit;
+    color: inherit;
+    width: 100%;
+    display: block;
+  }
+  .answer-card:hover, .answer-card:focus-visible {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 40px rgba(0,0,0,0.4);
+    border-color: var(--lvl-color, var(--gray));
+    background: var(--bg-card-hover);
+    outline: none;
+  }
+  .answer-card.lvl-anf { --lvl-color: var(--anfaenger); }
+  .answer-card.lvl-fg  { --lvl-color: var(--fortgeschritten); }
+  .answer-card.lvl-exp { --lvl-color: var(--experte); }
+
+  .answer-card .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 12px;
+    border-radius: 999px;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 14px;
+    background: color-mix(in srgb, var(--lvl-color) 12%, transparent);
+    color: var(--lvl-color);
+    border: 1px solid color-mix(in srgb, var(--lvl-color) 40%, transparent);
+  }
+  .answer-card .pill .dot { width: 8px; height: 8px; border-radius: 50%; background: currentColor; }
+  .answer-card .title {
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: var(--white);
+    margin-bottom: 8px;
+  }
+  .answer-card .desc {
+    font-size: 13px;
+    color: var(--gray-light);
+    line-height: 1.5;
+  }
+
+  /* ===== Q2-Q4 list answers ===== */
+  .answer-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .answer-row {
+    background: var(--bg-card);
+    border: 2px solid var(--gray-dark);
+    border-radius: 12px;
+    padding: 18px 22px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    font-family: inherit;
+    color: inherit;
+    width: 100%;
+    text-align: left;
+  }
+  .answer-row:hover, .answer-row:focus-visible {
+    border-color: var(--primary);
+    background: var(--bg-card-hover);
+    outline: none;
+  }
+  .answer-row .letter {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    border: 2px solid var(--gray);
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800;
+    color: var(--gray-light);
+    font-size: 13px;
+    flex-shrink: 0;
+    transition: all 0.2s;
+  }
+  .answer-row:hover .letter, .answer-row:focus-visible .letter {
+    border-color: var(--primary);
+    color: var(--primary);
+  }
+  .answer-row .text {
+    font-size: 15px;
+    color: var(--white-muted);
+    font-weight: 500;
+  }
+
+  /* ===== Footer of screen (back button) ===== */
+  .screen-footer {
+    margin-top: 36px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: var(--gray);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    font-weight: 600;
+  }
+  .btn-back {
+    font-family: inherit;
+    background: transparent;
+    border: 1px solid var(--gray-dark);
+    border-radius: 8px;
+    padding: 8px 18px;
+    font-size: 11px;
+    color: var(--gray-light);
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    font-weight: 700;
+    transition: all 0.2s;
+  }
+  .btn-back:hover { border-color: var(--gray); color: var(--white); }
+
+  /* ===== Result Screen ===== */
+  .result {
+    text-align: center;
+    padding: 24px 0 8px;
+  }
+  .result .stamp {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 22px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 28px;
+    border: 2px solid;
+  }
+  .result .stamp.anf { color: var(--anfaenger); border-color: var(--anfaenger); background: color-mix(in srgb, var(--anfaenger) 10%, transparent); }
+  .result .stamp.fg  { color: var(--fortgeschritten); border-color: var(--fortgeschritten); background: color-mix(in srgb, var(--fortgeschritten) 10%, transparent); }
+  .result .stamp.exp { color: var(--experte); border-color: var(--experte); background: color-mix(in srgb, var(--experte) 10%, transparent); }
+  .result .stamp .dot { width: 10px; height: 10px; border-radius: 50%; background: currentColor; }
+
+  .result .headline {
+    font-size: clamp(2.2rem, 5vw, 3.4rem);
+    font-weight: 900;
+    color: var(--white);
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+    margin: 0 0 14px;
+  }
+  .result .headline .level-word.anf { color: var(--anfaenger); }
+  .result .headline .level-word.fg  { color: var(--fortgeschritten); }
+  .result .headline .level-word.exp { color: var(--experte); }
+  .result .qualifier {
+    font-size: 18px;
+    color: var(--gray-light);
+    font-weight: 600;
+    margin: 0 0 22px;
+    max-width: 620px;
+    margin-left: auto; margin-right: auto;
+  }
+  .result .body {
+    font-size: 17px;
+    color: var(--gray-light);
+    max-width: 620px;
+    margin: 0 auto 32px;
+    line-height: 1.65;
+    font-weight: 400;
+  }
+  .result .cta-row {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .btn-primary {
+    font-family: inherit;
+    background: var(--primary);
+    color: #fff;
+    border: none;
+    padding: 14px 32px;
+    font-size: 13px;
+    font-weight: 700;
+    border-radius: 10px;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    transition: all 0.2s;
+  }
+  .btn-primary:hover {
+    background: var(--primary-light);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(255,26,26,0.3);
+  }
+  .btn-secondary {
+    font-family: inherit;
+    background: transparent;
+    color: var(--white-muted);
+    border: 1px solid var(--gray);
+    padding: 14px 28px;
+    font-size: 13px;
+    font-weight: 600;
+    border-radius: 10px;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    transition: all 0.2s;
+  }
+  .btn-secondary:hover { border-color: var(--white); color: var(--white); }
+
+  /* ===== Invite-Sektion (zur Akademie) ===== */
+  .invite {
+    margin-top: 56px;
+    padding-top: 32px;
+    border-top: 1px solid var(--gray-dark);
+    text-align: center;
+  }
+  .invite .invite-headline {
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--white);
+    margin: 0 0 6px;
+  }
+  .invite .invite-sub {
+    font-size: 14px;
+    color: var(--gray-light);
+    margin: 0 0 22px;
+    font-weight: 400;
+  }
+  .btn-invite {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 26px;
+    background: transparent;
+    border: 1px solid var(--gray);
+    color: var(--white-muted);
+    border-radius: 10px;
+    text-decoration: none;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    font-family: inherit;
+    transition: all 0.2s;
+  }
+  .btn-invite:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+    transform: translateY(-1px);
+  }
+  .btn-invite .arrow {
+    transition: transform 0.2s;
+    display: inline-block;
+  }
+  .btn-invite:hover .arrow { transform: translateX(4px); }
+
+  /* ===== Toast ===== */
+  .toast {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%) translateY(80px);
+    background: var(--bg-card);
+    border: 1px solid var(--primary);
+    color: var(--white);
+    padding: 12px 20px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 600;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    z-index: 200;
+    transition: transform 0.32s cubic-bezier(.4,0,.2,1), opacity 0.32s;
+    opacity: 0;
+    pointer-events: none;
+  }
+  .toast.show {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+  }
+
+  /* ===== Tastaturhinweis ===== */
+  .keyhint {
+    text-align: center;
+    margin-top: 24px;
+    font-size: 11px;
+    color: var(--gray);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+  }
+  .keyhint kbd {
+    display: inline-block;
+    padding: 2px 7px;
+    background: var(--gray-dark);
+    border-radius: 4px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 10px;
+    color: var(--white-muted);
+    margin: 0 2px;
+  }
+
+  /* ===== Mobile ===== */
+  @media (max-width: 720px) {
+    .frame { padding: 36px 24px 36px; border-radius: 0; border: none; }
+    .stage { padding: 70px 0 30px; }
+    .answer-grid { grid-template-columns: 1fr; gap: 12px; }
+    .answer-card { padding: 22px 18px; }
+    .q-heading { font-size: 1.6rem; }
+    .answer-row { padding: 16px 18px; }
+    .answer-row .text { font-size: 14px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="logo-bar">
+  <div class="logo-mark">A</div>
+  <span class="label">AI Performance Academy</span>
+</div>
+
+<div class="stage">
+  <div class="frame" id="frame"></div>
+</div>
+
+<div class="toast" id="toast">Ergebnis kopiert</div>
+
+<script>
+  // ===========================================================
+  // Daten
+  // ===========================================================
+
+  const LEVELS = {
+    anf: { name: 'Anfänger', cls: 'anf' },
+    fg:  { name: 'Fortgeschritten', cls: 'fg' },
+    exp: { name: 'Experte', cls: 'exp' }
+  };
+
+  const Q1 = {
+    headline: ['Wo stehst du gerade', 'mit KI?'],
+    sub: 'Wähle die Option, die heute am ehesten zu dir passt. Wir richten den Test danach aus.',
+    options: [
+      {
+        cls: 'anf',
+        pill: 'Anfänger',
+        title: 'Ich fange gerade an',
+        desc: 'Wenig oder keine Erfahrung mit KI — ich will wissen, wie ich starte.',
+        value: 'anf'
+      },
+      {
+        cls: 'fg',
+        pill: 'Fortgeschritten',
+        title: 'Ich nutze KI bereits',
+        desc: 'Ich arbeite damit, will aber systematisch besser werden.',
+        value: 'fg'
+      },
+      {
+        cls: 'exp',
+        pill: 'Experte',
+        title: 'Ich gehe in die Tiefe',
+        desc: 'Ich arbeite tief mit KI und will mich spezialisieren.',
+        value: 'exp'
+      }
+    ]
+  };
+
+  const FLOW = {
+    anf: [
+      {
+        headline: ['Wie oft nutzt du KI', 'bisher?'],
+        sub: 'Eine Frage, eine Antwort — direkt zur nächsten.',
+        options: [
+          { letter: 'A', text: 'Nie oder nur ausprobiert', score: -1 },
+          { letter: 'B', text: 'Gelegentlich, ein paar Mal pro Woche', score: 0 },
+          { letter: 'C', text: 'Täglich, mehrere Tools im Einsatz', score: 1 }
+        ]
+      },
+      {
+        headline: ['Schreibst du', 'strukturierte Prompts?'],
+        sub: 'Mit klarer Rolle, Kontext und gewünschtem Format.',
+        options: [
+          { letter: 'A', text: 'Davon habe ich noch nicht gehört', score: -1 },
+          { letter: 'B', text: 'Manchmal, wenn ich daran denke', score: 0 },
+          { letter: 'C', text: 'Ja, das ist meine Routine', score: 1 }
+        ]
+      },
+      {
+        headline: ['Hast du schon mit KI', 'etwas automatisiert?'],
+        sub: 'Einen Workflow, eine wiederkehrende Aufgabe, einen Mini-Agenten.',
+        options: [
+          { letter: 'A', text: 'Nein, noch nicht', score: -1 },
+          { letter: 'B', text: 'Erste Versuche, ein paar Sachen probiert', score: 0 },
+          { letter: 'C', text: 'Ja, läuft regelmäßig', score: 1 }
+        ]
+      }
+    ],
+    fg: [
+      {
+        headline: ['Wie viele KI-Tools', 'nutzt du regelmäßig?'],
+        sub: 'Nebeneinander, mit klarem Use Case je Tool.',
+        options: [
+          { letter: 'A', text: 'Eines, meist ChatGPT oder Claude', score: -1 },
+          { letter: 'B', text: '2–3 verschiedene', score: 0 },
+          { letter: 'C', text: '4 oder mehr, je Tool ein klarer Zweck', score: 1 }
+        ]
+      },
+      {
+        headline: ['Hast du eigene Workflows', 'oder Agenten gebaut?'],
+        sub: 'Etwas, das wiederholt für dich arbeitet.',
+        options: [
+          { letter: 'A', text: 'Noch nicht', score: -1 },
+          { letter: 'B', text: 'Mit n8n, Zapier oder Skills experimentiert', score: 0 },
+          { letter: 'C', text: 'Ja, läuft produktiv im Alltag', score: 1 }
+        ]
+      },
+      {
+        headline: ['System Prompts, Chain-of-Thought,', 'MCP — sagt dir das was?'],
+        sub: 'Fortgeschrittene Techniken, die mehr aus KI rausholen.',
+        options: [
+          { letter: 'A', text: 'Nein, das ist Neuland', score: -1 },
+          { letter: 'B', text: 'Grob gehört, weiß ungefähr worum’s geht', score: 0 },
+          { letter: 'C', text: 'Nutze ich aktiv', score: 1 }
+        ]
+      }
+    ],
+    exp: [
+      {
+        headline: ['Eigene KI-Agenten produktiv', 'oder Multi-Agent orchestriert?'],
+        sub: 'Nicht nur experimentell, sondern im echten Einsatz.',
+        options: [
+          { letter: 'A', text: 'Noch nicht in Produktion', score: -1 },
+          { letter: 'B', text: 'Einzelne Agenten produktiv, Multi-Agent ist neu', score: 0 },
+          { letter: 'C', text: 'Mehrere Agenten produktiv orchestriert', score: 1 }
+        ]
+      },
+      {
+        headline: ['Entwickelst du KI-Strategie', 'für andere?'],
+        sub: 'Für Team, Kunden oder ein ganzes Unternehmen.',
+        options: [
+          { letter: 'A', text: 'Nein, nur für mich selbst', score: -1 },
+          { letter: 'B', text: 'Ad hoc, wenn jemand fragt', score: 0 },
+          { letter: 'C', text: 'Ja, regelmäßig und strukturiert', score: 1 }
+        ]
+      },
+      {
+        headline: ['Schreibst du Custom Skills,', 'MCP-Tools oder eigene Engines?'],
+        sub: 'Eigene Werkzeuge, nicht nur fertige Tools nutzen.',
+        options: [
+          { letter: 'A', text: 'Nein, das ist mir zu technisch', score: -1 },
+          { letter: 'B', text: 'Habe es probiert', score: 0 },
+          { letter: 'C', text: 'Ja, das ist Teil meines Workflows', score: 1 }
+        ]
+      }
+    ]
+  };
+
+  // Result-Texte: jedem Outcome zugeordnet
+  const RESULTS = {
+    anf_pure: {
+      level: 'anf',
+      headline: 'Du bist Anfänger.',
+      qualifier: '',
+      body: 'Der richtige Startpunkt, um KI systematisch und ohne Umwege zu lernen.'
+    },
+    anf_tendency_up: {
+      level: 'anf',
+      headline: 'Du bist Anfänger —',
+      qualifier: 'mit klarer Tendenz Richtung Fortgeschritten.',
+      body: 'Du hast schon einige Bausteine drauf. Der Einstieg gibt dir das Fundament, und du kommst schnell ins Tempo.'
+    },
+    anf_upgrade: {
+      level: 'fg',
+      headline: 'Du bist Fortgeschritten.',
+      qualifier: 'Du hattest dich als Anfänger eingestuft — und bist schon weiter.',
+      body: 'Der Fortgeschritten-Weg passt besser zu dir und nutzt das, was du schon kannst.'
+    },
+
+    fg_downgrade: {
+      level: 'anf',
+      headline: 'Du bist Anfänger.',
+      qualifier: 'Du bringst Mindset mit — bei den Grundlagen lohnt sich ein systematischer Aufbau.',
+      body: 'Der Anfänger-Weg gibt dir das Fundament, auf dem du danach schnell vorankommst.'
+    },
+    fg_tendency_down: {
+      level: 'fg',
+      headline: 'Du bist Fortgeschritten —',
+      qualifier: 'mit ein paar Themen zum Auffrischen.',
+      body: 'Du arbeitest schon systematisch, ein paar Bausteine fehlen noch zum nächsten Schritt.'
+    },
+    fg_pure: {
+      level: 'fg',
+      headline: 'Du bist Fortgeschritten.',
+      qualifier: '',
+      body: 'Du nutzt KI bereits und kennst die Kerntechniken. Jetzt geht’s um Tiefe und die Anwendung in deinen eigenen Prozessen.'
+    },
+    fg_tendency_up: {
+      level: 'fg',
+      headline: 'Du bist Fortgeschritten —',
+      qualifier: 'mit klarer Tendenz Richtung Experte.',
+      body: 'Du baust schon eigene Workflows und kennst die fortgeschrittenen Techniken. Der nächste Schritt wäre Spezialisierung.'
+    },
+    fg_upgrade: {
+      level: 'exp',
+      headline: 'Du bist Experte.',
+      qualifier: 'Du hattest dich als Fortgeschritten eingestuft — deine Antworten zeigen Experten-Niveau.',
+      body: 'Du orchestrierst Agenten und entwickelst Strategie. Der Experten-Weg holt aus dir mehr raus.'
+    },
+
+    exp_downgrade_big: {
+      level: 'anf',
+      headline: 'Du bist Anfänger.',
+      qualifier: 'Schön, dass du mit Anspruch ans Thema gehst.',
+      body: 'Deine Antworten zeigen, dass du beim systematischen Aufbau gerade erst startest — der Anfänger-Weg gibt dir das Fundament, auf dem die spätere Spezialisierung viel leichter fällt.'
+    },
+    exp_downgrade: {
+      level: 'fg',
+      headline: 'Du bist Fortgeschritten.',
+      qualifier: 'In einigen Bereichen bist du schon weit — insgesamt passt der Fortgeschritten-Weg besser.',
+      body: 'Dort holst du gezielt das raus, was den Sprung zum Experten ausmacht.'
+    },
+    exp_tendency_down: {
+      level: 'exp',
+      headline: 'Du bist Experte —',
+      qualifier: 'mit ein paar Themen zum Vertiefen.',
+      body: 'Die Basis steht, ein paar fortgeschrittene Bausteine warten noch auf dich.'
+    },
+    exp_pure: {
+      level: 'exp',
+      headline: 'Du bist Experte.',
+      qualifier: '',
+      body: 'Du arbeitest tief mit KI, baust eigene Systeme und gibst Wissen weiter. Jetzt geht’s um Spezialisierung — Multi-Agent, Custom Skills, KI-Strategie auf höchster Ebene.'
+    }
+  };
+
+  // ===========================================================
+  // State
+  // ===========================================================
+
+  const state = {
+    selfPick: null,    // 'anf' | 'fg' | 'exp'
+    answers: [],       // Array<-1|0|1>
+    step: 0            // 0..4 (0 = Q1 splitter)
+  };
+
+  // ===========================================================
+  // Logik: Outcome berechnen
+  // ===========================================================
+
+  function resolveOutcome(selfPick, answers) {
+    const score = answers.reduce((a, b) => a + b, 0);
+    if (selfPick === 'anf') {
+      if (score >= 2) return RESULTS.anf_upgrade;
+      if (score === 1) return RESULTS.anf_tendency_up;
+      return RESULTS.anf_pure;
+    }
+    if (selfPick === 'fg') {
+      if (score >= 2) return RESULTS.fg_upgrade;
+      if (score === 1) return RESULTS.fg_tendency_up;
+      if (score === 0) return RESULTS.fg_pure;
+      if (score === -1) return RESULTS.fg_tendency_down;
+      return RESULTS.fg_downgrade; // -2 oder -3
+    }
+    if (selfPick === 'exp') {
+      if (score === -3) return RESULTS.exp_downgrade_big;
+      if (score === -2) return RESULTS.exp_downgrade;
+      if (score === -1) return RESULTS.exp_tendency_down;
+      return RESULTS.exp_pure; // 0 oder höher
+    }
+  }
+
+  // ===========================================================
+  // Render
+  // ===========================================================
+
+  const frame = document.getElementById('frame');
+
+  function renderQ1() {
+    const html = `
+      <div class="screen active">
+        ${renderProgress(1)}
+        <h1 class="q-heading">${Q1.headline[0]} <span class="accent">${Q1.headline[1]}</span></h1>
+        <p class="q-sub">${Q1.sub}</p>
+        <div class="answer-grid">
+          ${Q1.options.map((o, i) => `
+            <button type="button" class="answer-card lvl-${o.cls}" data-pick="${o.value}" data-idx="${i}">
+              <span class="pill"><span class="dot"></span>${o.pill}</span>
+              <div class="title">${o.title}</div>
+              <div class="desc">${o.desc}</div>
+            </button>
+          `).join('')}
+        </div>
+        <div class="keyhint">Tipp: Tasten <kbd>1</kbd> <kbd>2</kbd> <kbd>3</kbd> wählen direkt aus</div>
+      </div>
+    `;
+    frame.innerHTML = html;
+    bindQ1();
+    focusFirst();
+  }
+
+  function renderFollowup(qIndex) {
+    const path = state.selfPick;
+    const q = FLOW[path][qIndex];
+    const stepNum = qIndex + 2;
+    const html = `
+      <div class="screen active">
+        ${renderProgress(stepNum)}
+        <h1 class="q-heading">${q.headline[0]} <span class="accent">${q.headline[1]}</span></h1>
+        <p class="q-sub">${q.sub}</p>
+        <div class="answer-list">
+          ${q.options.map((opt, i) => `
+            <button type="button" class="answer-row" data-score="${opt.score}" data-idx="${i}">
+              <div class="letter">${opt.letter}</div>
+              <div class="text">${opt.text}</div>
+            </button>
+          `).join('')}
+        </div>
+        <div class="screen-footer">
+          <button type="button" class="btn-back" data-back>← zurück</button>
+          <span>Frage ${stepNum} von 4</span>
+        </div>
+        <div class="keyhint">Tasten <kbd>1</kbd> <kbd>2</kbd> <kbd>3</kbd> · <kbd>←</kbd> zurück</div>
+      </div>
+    `;
+    frame.innerHTML = html;
+    bindFollowup();
+    focusFirst();
+  }
+
+  function renderResult() {
+    const r = resolveOutcome(state.selfPick, state.answers);
+    const lvl = LEVELS[r.level];
+    const html = `
+      <div class="screen active">
+        <div class="result">
+          <div class="stamp ${r.level}"><span class="dot"></span>Dein Level</div>
+          <h1 class="headline">${formatHeadline(r.headline, r.level)}</h1>
+          ${r.qualifier ? `<p class="qualifier">${r.qualifier}</p>` : ''}
+          <p class="body">${r.body}</p>
+          <div class="cta-row">
+            <button type="button" class="btn-secondary" data-restart>Test wiederholen</button>
+            <button type="button" class="btn-primary" data-share>Ergebnis teilen</button>
+          </div>
+          <div class="invite">
+            <p class="invite-headline">Schau dich gerne in unserer Akademie um.</p>
+            <p class="invite-sub">Lehrgänge, Seminare und Specials — finde, was zu dir passt.</p>
+            <a class="btn-invite" href="https://ai-pa.ai/akademie/" target="_top" rel="noopener">
+              Zur Akademie <span class="arrow">→</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    `;
+    frame.innerHTML = html;
+    bindResult(r);
+  }
+
+  function formatHeadline(text, levelCls) {
+    // Letztes Wort einfärben (Anfänger / Fortgeschritten / Experte / Anfänger.)
+    const targets = ['Anfänger', 'Fortgeschritten', 'Experte'];
+    for (const t of targets) {
+      if (text.includes(t)) {
+        return text.replace(t, `<span class="level-word ${levelCls}">${t}</span>`);
+      }
+    }
+    return text;
+  }
+
+  function renderProgress(stepNum) {
+    const pct = (stepNum / 4) * 100;
+    return `
+      <div class="progress">
+        <span class="step">Schritt ${stepNum} / 4</span>
+        <div class="bar"><div class="fill" style="width: ${pct}%"></div></div>
+      </div>
+    `;
+  }
+
+  // ===========================================================
+  // Event Bindings
+  // ===========================================================
+
+  function bindQ1() {
+    document.querySelectorAll('[data-pick]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        state.selfPick = btn.dataset.pick;
+        state.answers = [];
+        state.step = 1;
+        renderFollowup(0);
+      });
+    });
+  }
+
+  function bindFollowup() {
+    document.querySelectorAll('[data-score]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const score = parseInt(btn.dataset.score, 10);
+        state.answers[state.step - 1] = score;
+        state.step++;
+        if (state.step <= 3) {
+          renderFollowup(state.step - 1);
+        } else {
+          renderResult();
+        }
+      });
+    });
+    const back = document.querySelector('[data-back]');
+    if (back) back.addEventListener('click', goBack);
+  }
+
+  function bindResult(result) {
+    document.querySelector('[data-restart]').addEventListener('click', restart);
+    document.querySelector('[data-share]').addEventListener('click', () => shareResult(result));
+  }
+
+  function goBack() {
+    if (state.step <= 1) {
+      // Zurück zur Eingangsfrage
+      state.selfPick = null;
+      state.answers = [];
+      state.step = 0;
+      renderQ1();
+    } else {
+      state.answers.pop();
+      state.step--;
+      renderFollowup(state.step - 1);
+    }
+  }
+
+  function restart() {
+    state.selfPick = null;
+    state.answers = [];
+    state.step = 0;
+    renderQ1();
+  }
+
+  // ===========================================================
+  // Sharing
+  // ===========================================================
+
+  async function shareResult(result) {
+    const lvl = LEVELS[result.level].name;
+    const text = `Mein KI-Level: ${lvl} — getestet bei der AI Performance Academy. Mach den Test: ${location.origin}${location.pathname}`;
+    try {
+      if (navigator.share) {
+        await navigator.share({ title: 'Mein KI-Level', text });
+        showToast('Geteilt');
+      } else {
+        await navigator.clipboard.writeText(text);
+        showToast('In Zwischenablage kopiert');
+      }
+    } catch (e) {
+      // User abgebrochen oder Permission denied — nichts tun
+    }
+  }
+
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2200);
+  }
+
+  // ===========================================================
+  // Tastatur
+  // ===========================================================
+
+  document.addEventListener('keydown', (e) => {
+    // 1/2/3 wählen Antwort
+    if (['1', '2', '3'].includes(e.key)) {
+      const idx = parseInt(e.key, 10) - 1;
+      const buttons = document.querySelectorAll('[data-pick], [data-score]');
+      if (buttons[idx]) {
+        buttons[idx].click();
+        e.preventDefault();
+      }
+    }
+    // Backspace oder Pfeil-Links: zurück
+    if ((e.key === 'Backspace' || e.key === 'ArrowLeft') && state.step >= 1) {
+      const back = document.querySelector('[data-back]');
+      if (back) {
+        goBack();
+        e.preventDefault();
+      } else if (state.step >= 1 && state.step <= 3) {
+        // Zurück auch ohne sichtbaren Button (z.B. focus auf body)
+        goBack();
+        e.preventDefault();
+      }
+    }
+  });
+
+  // ===========================================================
+  // A11y: focus first interactive element
+  // ===========================================================
+
+  function focusFirst() {
+    setTimeout(() => {
+      const first = frame.querySelector('button');
+      if (first) first.focus({ preventScroll: true });
+    }, 50);
+  }
+
+  // ===========================================================
+  // Start
+  // ===========================================================
+
+  renderQ1();
+</script>
+
+</body>
+</html>
