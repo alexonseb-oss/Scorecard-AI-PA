@@ -3,15 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Scorecard — AI Performance Academy</title>
-<meta name="description" content="Finde in 4 Klicks heraus, wo du gerade mit KI stehst.">
-<meta property="og:title" content="Scorecard — AI Performance Academy">
-<meta property="og:description" content="Finde in 4 Klicks heraus, wo du gerade mit KI stehst.">
+<title>Level-Test — AI Performance Academy</title>
+<meta name="description" content="Finde in 8 Klicks heraus, wo du gerade mit KI stehst.">
+<meta property="og:title" content="Level-Test — AI Performance Academy">
+<meta property="og:description" content="Finde in 8 Klicks heraus, wo du gerade mit KI stehst.">
 <meta property="og:type" content="website">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&display=swap" rel="stylesheet">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%23FF1A1A'/><text x='16' y='24' text-anchor='middle' fill='white' font-family='system-ui' font-weight='900' font-size='22'>A</text></svg>">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 40'><path d='M 6 32 A 26 26 0 0 1 58 32' fill='none' stroke='%23000' stroke-width='3'/><path d='M 50 32 A 26 26 0 0 1 58 32 L 56 28 L 50 30 Z' fill='%23E10600'/><line x1='32' y1='32' x2='40' y2='14' stroke='%23000' stroke-width='2.5' stroke-linecap='round'/><circle cx='32' cy='32' r='2.5' fill='%23000'/></svg>">
 <style>
   :root {
     --bg: #0a0a0a;
@@ -36,7 +36,7 @@
     background: var(--bg);
     color: var(--white-muted);
     line-height: 1.6;
-    font-size: 15px;
+    font-size: 17px;
     min-height: 100vh;
     overflow-x: hidden;
   }
@@ -52,17 +52,18 @@
     padding: 12px 24px;
     display: flex;
     align-items: center;
-    gap: 16px;
+    gap: 14px;
     z-index: 100;
     border-bottom: 1px solid var(--gray-dark);
   }
-  .logo-mark {
-    width: 28px; height: 28px;
-    background: var(--primary);
-    border-radius: 6px;
-    display: flex; align-items: center; justify-content: center;
-    color: white; font-weight: 900; font-size: 16px;
+  .logo-bar .logo-mark {
+    width: 44px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
+  .logo-bar .logo-mark svg { display: block; width: 100%; height: 100%; }
   .logo-bar .label {
     font-size: 13px;
     font-weight: 600;
@@ -77,15 +78,15 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 80px 24px 40px;
+    padding: 68px 24px 32px;
   }
   .frame {
     width: 100%;
-    max-width: 880px;
+    max-width: 760px;
     background: var(--bg-card);
     border: 1px solid var(--gray-dark);
-    border-radius: 20px;
-    padding: 56px 56px 56px;
+    border-radius: 18px;
+    padding: 44px 48px;
     box-shadow: 0 20px 60px rgba(0,0,0,0.5);
     position: relative;
   }
@@ -103,7 +104,7 @@
     display: flex;
     align-items: center;
     gap: 16px;
-    margin-bottom: 36px;
+    margin-bottom: 28px;
   }
   .progress .step {
     font-size: 11px;
@@ -129,18 +130,18 @@
 
   /* ===== Question heading ===== */
   .q-heading {
-    font-size: clamp(1.7rem, 3.6vw, 2.5rem);
+    font-size: clamp(1.5rem, 3.2vw, 2.15rem);
     font-weight: 900;
     color: var(--white);
     letter-spacing: -0.02em;
     line-height: 1.15;
-    margin: 0 0 14px;
+    margin: 0 0 12px;
   }
   .q-heading .accent { color: var(--primary); }
   .q-sub {
-    font-size: 15px;
+    font-size: 16px;
     color: var(--gray-light);
-    margin: 0 0 36px;
+    margin: 0 0 28px;
     max-width: 600px;
     font-weight: 400;
   }
@@ -154,8 +155,8 @@
   .answer-card {
     background: var(--bg-card);
     border: 2px solid var(--gray-dark);
-    border-radius: 16px;
-    padding: 28px 22px;
+    border-radius: 14px;
+    padding: 22px 20px;
     cursor: pointer;
     transition: all 0.25s;
     text-align: left;
@@ -198,12 +199,12 @@
     margin-bottom: 8px;
   }
   .answer-card .desc {
-    font-size: 13px;
+    font-size: 14.5px;
     color: var(--gray-light);
     line-height: 1.5;
   }
 
-  /* ===== Q2-Q4 list answers ===== */
+  /* ===== Q2-Q8 list answers ===== */
   .answer-list {
     display: flex;
     flex-direction: column;
@@ -213,12 +214,12 @@
     background: var(--bg-card);
     border: 2px solid var(--gray-dark);
     border-radius: 12px;
-    padding: 18px 22px;
+    padding: 15px 20px;
     cursor: pointer;
     transition: all 0.2s;
     display: flex;
     align-items: center;
-    gap: 16px;
+    gap: 14px;
     font-family: inherit;
     color: inherit;
     width: 100%;
@@ -245,14 +246,14 @@
     color: var(--primary);
   }
   .answer-row .text {
-    font-size: 15px;
+    font-size: 17px;
     color: var(--white-muted);
     font-weight: 500;
   }
 
   /* ===== Footer of screen (back button) ===== */
   .screen-footer {
-    margin-top: 36px;
+    margin-top: 28px;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -281,19 +282,19 @@
   /* ===== Result Screen ===== */
   .result {
     text-align: center;
-    padding: 24px 0 8px;
+    padding: 12px 0 4px;
   }
   .result .stamp {
     display: inline-flex;
     align-items: center;
     gap: 10px;
-    padding: 10px 22px;
+    padding: 8px 18px;
     border-radius: 999px;
     font-size: 11px;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 2px;
-    margin-bottom: 28px;
+    margin-bottom: 22px;
     border: 2px solid;
   }
   .result .stamp.anf { color: var(--anfaenger); border-color: var(--anfaenger); background: color-mix(in srgb, var(--anfaenger) 10%, transparent); }
@@ -302,39 +303,41 @@
   .result .stamp .dot { width: 10px; height: 10px; border-radius: 50%; background: currentColor; }
 
   .result .headline {
-    font-size: clamp(2.2rem, 5vw, 3.4rem);
+    font-size: clamp(1.85rem, 4.2vw, 2.85rem);
     font-weight: 900;
     color: var(--white);
     letter-spacing: -0.02em;
     line-height: 1.1;
-    margin: 0 0 14px;
+    margin: 0 0 12px;
   }
   .result .headline .level-word.anf { color: var(--anfaenger); }
   .result .headline .level-word.fg  { color: var(--fortgeschritten); }
   .result .headline .level-word.exp { color: var(--experte); }
   .result .qualifier {
-    font-size: 18px;
+    font-size: 17px;
     color: var(--gray-light);
     font-weight: 600;
-    margin: 0 0 22px;
-    max-width: 620px;
+    margin: 0 0 16px;
+    max-width: 600px;
     margin-left: auto; margin-right: auto;
   }
   .result .body {
-    font-size: 17px;
+    font-size: 16.5px;
     color: var(--gray-light);
-    max-width: 620px;
-    margin: 0 auto 32px;
-    line-height: 1.65;
+    max-width: 600px;
+    margin: 0 auto 28px;
+    line-height: 1.6;
     font-weight: 400;
   }
-  .result .cta-row {
+
+  /* ===== CTA-Stack auf Ergebnis-Seite ===== */
+  .cta-stack {
     display: flex;
-    gap: 12px;
-    justify-content: center;
-    flex-wrap: wrap;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
   }
-  .btn-primary {
+  .cta-primary {
     font-family: inherit;
     background: var(--primary);
     color: #fff;
@@ -347,74 +350,44 @@
     text-transform: uppercase;
     letter-spacing: 1.5px;
     transition: all 0.2s;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 0 2px 8px rgba(255,26,26,0.12);
   }
-  .btn-primary:hover {
+  .cta-primary:hover {
     background: var(--primary-light);
-    transform: translateY(-2px);
-    box-shadow: 0 8px 24px rgba(255,26,26,0.3);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(255,26,26,0.22);
+  }
+  .cta-primary .arrow {
+    transition: transform 0.2s;
+    display: inline-block;
+  }
+  .cta-primary:hover .arrow { transform: translateX(4px); }
+
+  .cta-secondary-row {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    flex-wrap: wrap;
   }
   .btn-secondary {
     font-family: inherit;
     background: transparent;
     color: var(--white-muted);
     border: 1px solid var(--gray);
-    padding: 14px 28px;
-    font-size: 13px;
-    font-weight: 600;
-    border-radius: 10px;
+    padding: 11px 22px;
+    font-size: 12px;
+    font-weight: 700;
+    border-radius: 8px;
     cursor: pointer;
     text-transform: uppercase;
-    letter-spacing: 1.5px;
+    letter-spacing: 1.2px;
     transition: all 0.2s;
   }
   .btn-secondary:hover { border-color: var(--white); color: var(--white); }
-
-  /* ===== Invite-Sektion (zur Akademie) ===== */
-  .invite {
-    margin-top: 56px;
-    padding-top: 32px;
-    border-top: 1px solid var(--gray-dark);
-    text-align: center;
-  }
-  .invite .invite-headline {
-    font-size: 17px;
-    font-weight: 700;
-    color: var(--white);
-    margin: 0 0 6px;
-  }
-  .invite .invite-sub {
-    font-size: 14px;
-    color: var(--gray-light);
-    margin: 0 0 22px;
-    font-weight: 400;
-  }
-  .btn-invite {
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    padding: 12px 26px;
-    background: transparent;
-    border: 1px solid var(--gray);
-    color: var(--white-muted);
-    border-radius: 10px;
-    text-decoration: none;
-    font-size: 12px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 1.5px;
-    font-family: inherit;
-    transition: all 0.2s;
-  }
-  .btn-invite:hover {
-    border-color: var(--primary);
-    color: var(--primary);
-    transform: translateY(-1px);
-  }
-  .btn-invite .arrow {
-    transition: transform 0.2s;
-    display: inline-block;
-  }
-  .btn-invite:hover .arrow { transform: translateX(4px); }
 
   /* ===== Toast ===== */
   .toast {
@@ -427,7 +400,7 @@
     color: var(--white);
     padding: 12px 20px;
     border-radius: 10px;
-    font-size: 13px;
+    font-size: 14px;
     font-weight: 600;
     box-shadow: 0 10px 30px rgba(0,0,0,0.5);
     z-index: 200;
@@ -443,7 +416,7 @@
   /* ===== Tastaturhinweis ===== */
   .keyhint {
     text-align: center;
-    margin-top: 24px;
+    margin-top: 18px;
     font-size: 11px;
     color: var(--gray);
     text-transform: uppercase;
@@ -460,22 +433,58 @@
     margin: 0 2px;
   }
 
+  /* ===== Kompakter Modus für Laptops mit niedriger Bildschirmhöhe ===== */
+  @media (max-height: 850px) and (min-width: 721px) {
+    .stage { padding: 56px 24px 24px; }
+    .frame { padding: 32px 40px; }
+    .progress { margin-bottom: 22px; }
+    .q-heading { font-size: clamp(1.4rem, 2.8vw, 1.85rem); }
+    .q-sub { font-size: 15px; margin-bottom: 22px; }
+    .answer-card { padding: 18px 16px; }
+    .answer-card .pill { margin-bottom: 10px; }
+    .answer-card .title { font-size: 1rem; margin-bottom: 6px; }
+    .answer-card .desc { font-size: 13.5px; }
+    .answer-row { padding: 13px 18px; }
+    .answer-row .text { font-size: 16px; }
+    .answer-row .letter { width: 28px; height: 28px; font-size: 12px; }
+    .screen-footer { margin-top: 22px; }
+    .keyhint { margin-top: 14px; }
+    .result { padding: 4px 0 0; }
+    .result .stamp { margin-bottom: 16px; padding: 7px 16px; font-size: 10.5px; }
+    .result .headline { font-size: clamp(1.65rem, 3.6vw, 2.4rem); margin-bottom: 10px; }
+    .result .qualifier { font-size: 15.5px; margin-bottom: 14px; }
+    .result .body { font-size: 15.5px; margin-bottom: 22px; }
+    .cta-primary { padding: 12px 26px; font-size: 12.5px; }
+  }
+
   /* ===== Mobile ===== */
   @media (max-width: 720px) {
+    body { font-size: 16px; }
     .frame { padding: 36px 24px 36px; border-radius: 0; border: none; }
     .stage { padding: 70px 0 30px; }
     .answer-grid { grid-template-columns: 1fr; gap: 12px; }
     .answer-card { padding: 22px 18px; }
     .q-heading { font-size: 1.6rem; }
     .answer-row { padding: 16px 18px; }
-    .answer-row .text { font-size: 14px; }
+    .answer-row .text { font-size: 16px; }
+    .q-sub { font-size: 16px; }
+    .result .body { font-size: 16.5px; }
+    .result .qualifier { font-size: 17px; }
+    .cta-primary { padding: 12px 24px; font-size: 12.5px; }
   }
 </style>
 </head>
 <body>
 
 <div class="logo-bar">
-  <div class="logo-mark">A</div>
+  <div class="logo-mark" aria-label="AI Performance Academy">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 40">
+      <path d="M 6 32 A 26 26 0 0 1 58 32" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="butt"/>
+      <path d="M 50 32 A 26 26 0 0 1 58 32 L 56 28 L 50 30 Z" fill="#E10600"/>
+      <line x1="32" y1="32" x2="40" y2="14" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round"/>
+      <circle cx="32" cy="32" r="2.5" fill="#FFFFFF"/>
+    </svg>
+  </div>
   <span class="label">AI Performance Academy</span>
 </div>
 
@@ -487,8 +496,11 @@
 
 <script>
   // ===========================================================
-  // Daten
+  // Konstanten
   // ===========================================================
+
+  const TOTAL_STEPS = 8;          // 1 Splitter + 7 Folgefragen
+  const AKADEMIE_URL = 'https://ai-pa.ai/akademie/';
 
   const LEVELS = {
     anf: { name: 'Anfänger', cls: 'anf' },
@@ -496,200 +508,120 @@
     exp: { name: 'Experte', cls: 'exp' }
   };
 
+  // Q1 — Selbsteinschätzung als Hypothese
   const Q1 = {
-    headline: ['Wo stehst du gerade', 'mit KI?'],
-    sub: 'Wähle die Option, die heute am ehesten zu dir passt. Wir richten den Test danach aus.',
+    headline: ['Wo siehst du dich gerade', 'mit KI?'],
+    sub: 'Stuf dich grob ein — am Ende prüfen wir, ob du richtig liegst.',
     options: [
-      {
-        cls: 'anf',
-        pill: 'Anfänger',
-        title: 'Ich fange gerade an',
-        desc: 'Wenig oder keine Erfahrung mit KI — ich will wissen, wie ich starte.',
-        value: 'anf'
-      },
-      {
-        cls: 'fg',
-        pill: 'Fortgeschritten',
-        title: 'Ich nutze KI bereits',
-        desc: 'Ich arbeite damit, will aber systematisch besser werden.',
-        value: 'fg'
-      },
-      {
-        cls: 'exp',
-        pill: 'Experte',
-        title: 'Ich gehe in die Tiefe',
-        desc: 'Ich arbeite tief mit KI und will mich spezialisieren.',
-        value: 'exp'
-      }
+      { cls: 'anf', pill: 'Anfänger',       title: 'Ich fange gerade an',  desc: 'Wenig oder keine Erfahrung mit KI — ich will wissen, wie ich starte.', value: 'anf' },
+      { cls: 'fg',  pill: 'Fortgeschritten', title: 'Ich nutze KI bereits', desc: 'Ich arbeite damit, will aber systematisch besser werden.',              value: 'fg'  },
+      { cls: 'exp', pill: 'Experte',         title: 'Ich gehe in die Tiefe', desc: 'Ich arbeite tief mit KI und will mich spezialisieren.',                 value: 'exp' }
     ]
   };
 
-  const FLOW = {
-    anf: [
-      {
-        headline: ['Wie oft nutzt du KI', 'bisher?'],
-        sub: 'Eine Frage, eine Antwort — direkt zur nächsten.',
-        options: [
-          { letter: 'A', text: 'Nie oder nur ausprobiert', score: -1 },
-          { letter: 'B', text: 'Gelegentlich, ein paar Mal pro Woche', score: 0 },
-          { letter: 'C', text: 'Täglich, mehrere Tools im Einsatz', score: 1 }
-        ]
-      },
-      {
-        headline: ['Schreibst du', 'strukturierte Prompts?'],
-        sub: 'Mit klarer Rolle, Kontext und gewünschtem Format.',
-        options: [
-          { letter: 'A', text: 'Davon habe ich noch nicht gehört', score: -1 },
-          { letter: 'B', text: 'Manchmal, wenn ich daran denke', score: 0 },
-          { letter: 'C', text: 'Ja, das ist meine Routine', score: 1 }
-        ]
-      },
-      {
-        headline: ['Hast du schon mit KI', 'etwas automatisiert?'],
-        sub: 'Einen Workflow, eine wiederkehrende Aufgabe, einen Mini-Agenten.',
-        options: [
-          { letter: 'A', text: 'Nein, noch nicht', score: -1 },
-          { letter: 'B', text: 'Erste Versuche, ein paar Sachen probiert', score: 0 },
-          { letter: 'C', text: 'Ja, läuft regelmäßig', score: 1 }
-        ]
-      }
-    ],
-    fg: [
-      {
-        headline: ['Wie viele KI-Tools', 'nutzt du regelmäßig?'],
-        sub: 'Nebeneinander, mit klarem Use Case je Tool.',
-        options: [
-          { letter: 'A', text: 'Eines, meist ChatGPT oder Claude', score: -1 },
-          { letter: 'B', text: '2–3 verschiedene', score: 0 },
-          { letter: 'C', text: '4 oder mehr, je Tool ein klarer Zweck', score: 1 }
-        ]
-      },
-      {
-        headline: ['Hast du eigene Workflows', 'oder Agenten gebaut?'],
-        sub: 'Etwas, das wiederholt für dich arbeitet.',
-        options: [
-          { letter: 'A', text: 'Noch nicht', score: -1 },
-          { letter: 'B', text: 'Mit n8n, Zapier oder Skills experimentiert', score: 0 },
-          { letter: 'C', text: 'Ja, läuft produktiv im Alltag', score: 1 }
-        ]
-      },
-      {
-        headline: ['System Prompts, Chain-of-Thought,', 'MCP — sagt dir das was?'],
-        sub: 'Fortgeschrittene Techniken, die mehr aus KI rausholen.',
-        options: [
-          { letter: 'A', text: 'Nein, das ist Neuland', score: -1 },
-          { letter: 'B', text: 'Grob gehört, weiß ungefähr worum’s geht', score: 0 },
-          { letter: 'C', text: 'Nutze ich aktiv', score: 1 }
-        ]
-      }
-    ],
-    exp: [
-      {
-        headline: ['Eigene KI-Agenten produktiv', 'oder Multi-Agent orchestriert?'],
-        sub: 'Nicht nur experimentell, sondern im echten Einsatz.',
-        options: [
-          { letter: 'A', text: 'Noch nicht in Produktion', score: -1 },
-          { letter: 'B', text: 'Einzelne Agenten produktiv, Multi-Agent ist neu', score: 0 },
-          { letter: 'C', text: 'Mehrere Agenten produktiv orchestriert', score: 1 }
-        ]
-      },
-      {
-        headline: ['Entwickelst du KI-Strategie', 'für andere?'],
-        sub: 'Für Team, Kunden oder ein ganzes Unternehmen.',
-        options: [
-          { letter: 'A', text: 'Nein, nur für mich selbst', score: -1 },
-          { letter: 'B', text: 'Ad hoc, wenn jemand fragt', score: 0 },
-          { letter: 'C', text: 'Ja, regelmäßig und strukturiert', score: 1 }
-        ]
-      },
-      {
-        headline: ['Schreibst du Custom Skills,', 'MCP-Tools oder eigene Engines?'],
-        sub: 'Eigene Werkzeuge, nicht nur fertige Tools nutzen.',
-        options: [
-          { letter: 'A', text: 'Nein, das ist mir zu technisch', score: -1 },
-          { letter: 'B', text: 'Habe es probiert', score: 0 },
-          { letter: 'C', text: 'Ja, das ist Teil meines Workflows', score: 1 }
-        ]
-      }
-    ]
-  };
-
-  // Result-Texte: jedem Outcome zugeordnet
-  const RESULTS = {
-    anf_pure: {
-      level: 'anf',
-      headline: 'Du bist Anfänger.',
-      qualifier: '',
-      body: 'Der richtige Startpunkt, um KI systematisch und ohne Umwege zu lernen.'
+  // Q2–Q8 — universelle Folgefragen für alle, mit progressiver Tiefe
+  const QUESTIONS = [
+    // Q2 — Frequenz (Komfort)
+    {
+      headline: ['Wie oft nutzt du KI', 'in deinem Alltag?'],
+      sub: 'Eine Frage, eine Antwort — direkt zur nächsten.',
+      options: [
+        { letter: 'A', text: 'Selten — ich habe es ab und zu probiert',   score: -1 },
+        { letter: 'B', text: 'Mehrmals pro Woche, je nach Aufgabe',       score:  0 },
+        { letter: 'C', text: 'Täglich, fast in jedem Arbeitsblock',       score:  1 }
+      ]
     },
-    anf_tendency_up: {
-      level: 'anf',
-      headline: 'Du bist Anfänger —',
-      qualifier: 'mit klarer Tendenz Richtung Fortgeschritten.',
-      body: 'Du hast schon einige Bausteine drauf. Der Einstieg gibt dir das Fundament, und du kommst schnell ins Tempo.'
+    // Q3 — Tool-Vielfalt (Komfort)
+    {
+      headline: ['Mit wie vielen KI-Tools', 'arbeitest du regelmäßig?'],
+      sub: 'Nebeneinander, je nach Aufgabe.',
+      options: [
+        { letter: 'A', text: 'Eines, meist ChatGPT',                              score: -1 },
+        { letter: 'B', text: 'Zwei oder drei, je nach Zweck',                     score:  0 },
+        { letter: 'C', text: 'Vier oder mehr — jedes mit klarem Use Case',        score:  1 }
+      ]
     },
-    anf_upgrade: {
-      level: 'fg',
-      headline: 'Du bist Fortgeschritten.',
-      qualifier: 'Du hattest dich als Anfänger eingestuft — und bist schon weiter.',
-      body: 'Der Fortgeschritten-Weg passt besser zu dir und nutzt das, was du schon kannst.'
+    // Q4 — Prompt-Qualität (Erste Tiefe)
+    {
+      headline: ['Wie schreibst du', 'einen typischen Prompt?'],
+      sub: 'Wie viel Struktur gibst du der KI mit auf den Weg?',
+      options: [
+        { letter: 'A', text: 'So, wie ich die Frage einem Kollegen stellen würde',         score: -1 },
+        { letter: 'B', text: 'Mit etwas Kontext, manchmal Beispielen',                     score:  0 },
+        { letter: 'C', text: 'Mit Rolle, Kontext, Beispielen und gewünschtem Format',      score:  1 }
+      ]
     },
-
-    fg_downgrade: {
-      level: 'anf',
-      headline: 'Du bist Anfänger.',
-      qualifier: 'Du bringst Mindset mit — bei den Grundlagen lohnt sich ein systematischer Aufbau.',
-      body: 'Der Anfänger-Weg gibt dir das Fundament, auf dem du danach schnell vorankommst.'
+    // Q5 — Output-Validierung (Erste Tiefe)
+    {
+      headline: ['Wenn KI dir antwortet —', 'was machst du damit?'],
+      sub: 'Vertrauen, prüfen, gegenchecken — wie ist deine Routine?',
+      options: [
+        { letter: 'A', text: 'Ich übernehme sie meistens direkt',                  score: -1 },
+        { letter: 'B', text: 'Ich überfliege und prüfe stichprobenartig',          score:  0 },
+        { letter: 'C', text: 'Ich habe feste Prüfschritte — Quellen, Gegenproben', score:  1 }
+      ]
     },
-    fg_tendency_down: {
-      level: 'fg',
-      headline: 'Du bist Fortgeschritten —',
-      qualifier: 'mit ein paar Themen zum Auffrischen.',
-      body: 'Du arbeitest schon systematisch, ein paar Bausteine fehlen noch zum nächsten Schritt.'
+    // Q6 — Kontext-Setup (Differenzierer)
+    {
+      headline: ['Arbeitest du mit', 'System Prompts oder Projects?'],
+      sub: 'Also: Gibst du der KI feste Regeln und Wissen mit, bevor du loslegst?',
+      options: [
+        { letter: 'A', text: 'Davon habe ich noch nicht gehört',         score: -1 },
+        { letter: 'B', text: 'Manchmal, für wiederkehrende Themen',      score:  0 },
+        { letter: 'C', text: 'Ja, feste Setups pro Use Case',            score:  1 }
+      ]
     },
-    fg_pure: {
-      level: 'fg',
-      headline: 'Du bist Fortgeschritten.',
-      qualifier: '',
-      body: 'Du nutzt KI bereits und kennst die Kerntechniken. Jetzt geht’s um Tiefe und die Anwendung in deinen eigenen Prozessen.'
+    // Q7 — Workflow-Automation (Differenzierer)
+    {
+      headline: ['Hast du eigene Workflows', 'oder Automationen gebaut?'],
+      sub: 'z. B. mit n8n, Zapier, Make oder Custom Skills — etwas, das wiederholt für dich arbeitet.',
+      options: [
+        { letter: 'A', text: 'Noch nicht — ich nutze KI im Chat',                     score: -1 },
+        { letter: 'B', text: 'Erste Versuche, einzelne Sachen funktionieren',         score:  0 },
+        { letter: 'C', text: 'Ja, läuft produktiv und spart messbar Zeit',            score:  1 }
+      ]
     },
-    fg_tendency_up: {
-      level: 'fg',
-      headline: 'Du bist Fortgeschritten —',
-      qualifier: 'mit klarer Tendenz Richtung Experte.',
-      body: 'Du baust schon eigene Workflows und kennst die fortgeschrittenen Techniken. Der nächste Schritt wäre Spezialisierung.'
-    },
-    fg_upgrade: {
-      level: 'exp',
-      headline: 'Du bist Experte.',
-      qualifier: 'Du hattest dich als Fortgeschritten eingestuft — deine Antworten zeigen Experten-Niveau.',
-      body: 'Du orchestrierst Agenten und entwickelst Strategie. Der Experten-Weg holt aus dir mehr raus.'
-    },
-
-    exp_downgrade_big: {
-      level: 'anf',
-      headline: 'Du bist Anfänger.',
-      qualifier: 'Schön, dass du mit Anspruch ans Thema gehst.',
-      body: 'Deine Antworten zeigen, dass du beim systematischen Aufbau gerade erst startest — der Anfänger-Weg gibt dir das Fundament, auf dem die spätere Spezialisierung viel leichter fällt.'
-    },
-    exp_downgrade: {
-      level: 'fg',
-      headline: 'Du bist Fortgeschritten.',
-      qualifier: 'In einigen Bereichen bist du schon weit — insgesamt passt der Fortgeschritten-Weg besser.',
-      body: 'Dort holst du gezielt das raus, was den Sprung zum Experten ausmacht.'
-    },
-    exp_tendency_down: {
-      level: 'exp',
-      headline: 'Du bist Experte —',
-      qualifier: 'mit ein paar Themen zum Vertiefen.',
-      body: 'Die Basis steht, ein paar fortgeschrittene Bausteine warten noch auf dich.'
-    },
-    exp_pure: {
-      level: 'exp',
-      headline: 'Du bist Experte.',
-      qualifier: '',
-      body: 'Du arbeitest tief mit KI, baust eigene Systeme und gibst Wissen weiter. Jetzt geht’s um Spezialisierung — Multi-Agent, Custom Skills, KI-Strategie auf höchster Ebene.'
+    // Q8 — Eigene Werkzeuge & Agenten (Experten-Schicht)
+    {
+      headline: ['Hast du eigene KI-Werkzeuge', 'oder Agenten gebaut?'],
+      sub: 'z. B. Custom Skills, MCP-Server, Multi-Agent-Setups — Tools, die deine KI bekommt, statt nur fertige Apps zu nutzen.',
+      options: [
+        { letter: 'A', text: 'Habe ich noch nicht gehört',                  score: -1 },
+        { letter: 'B', text: 'Habe es probiert, einzelne Sachen laufen',    score:  0 },
+        { letter: 'C', text: 'Ja, mehrere Agenten produktiv im Einsatz',    score:  1 }
+      ]
     }
+  ];
+
+  // ===========================================================
+  // Outcomes — 9 Varianten (selfPick × actualLevel)
+  // Schwellen: score ≤ −3 → anf, −2..+3 → fg, ≥ +4 → exp
+  // ===========================================================
+
+  const RESULTS = {
+    // Diagonale: Selbsteinschätzung trifft zu
+    anf_anf: { level: 'anf', headline: 'Du hattest recht — du bist Anfänger.',           qualifier: 'Saubere Selbsteinschätzung.',
+               body: 'Der richtige Startpunkt, um KI systematisch und ohne Umwege zu lernen. Du weißt, wo du stehst — das ist die halbe Miete.' },
+    fg_fg:   { level: 'fg',  headline: 'Du hattest recht — du bist Fortgeschritten.',     qualifier: 'Saubere Selbsteinschätzung.',
+               body: 'Du nutzt KI bereits und kennst die Kerntechniken. Jetzt geht’s um Tiefe und die Anwendung in deinen eigenen Prozessen.' },
+    exp_exp: { level: 'exp', headline: 'Du hattest recht — du bist Experte.',             qualifier: 'Saubere Selbsteinschätzung.',
+               body: 'Du arbeitest tief mit KI, baust eigene Systeme und gibst Wissen weiter. Jetzt geht’s um Spezialisierung — Multi-Agent, Custom Skills, KI-Strategie auf höchster Ebene.' },
+
+    // Untertrieben: Du bist weiter, als du dachtest
+    anf_fg:  { level: 'fg',  headline: 'Du bist weiter, als du dachtest — Fortgeschritten.', qualifier: 'Mehr drauf, als deine Selbsteinschätzung vermuten ließ.',
+               body: 'Einige Bausteine hast du längst im Griff. Auf dem Fortgeschritten-Weg holst du gezielt das raus, was den nächsten Schritt ausmacht.' },
+    anf_exp: { level: 'exp', headline: 'Riesige Überraschung — du bist eigentlich Experte.', qualifier: 'Selten gesehen: Du hast dich deutlich unterschätzt.',
+               body: 'Was du im Alltag tust, ist Experten-Niveau — Agenten, eigene Tools, klare Setups. Du brauchst keinen Einstieg, du brauchst Spezialisierung.' },
+    fg_exp:  { level: 'exp', headline: 'Du bist weiter, als du dachtest — Experte.',         qualifier: 'Deine Selbsteinschätzung war zu bescheiden.',
+               body: 'Du orchestrierst Agenten, baust eigene Werkzeuge und kennst die fortgeschrittenen Techniken aus dem Effeff. Der Experten-Weg holt aus dir mehr raus.' },
+
+    // Überschätzt: würdig, ohne „du lagst falsch"
+    fg_anf:  { level: 'anf', headline: 'Du bringst Anspruch mit — im Alltag stehst du noch auf Anfänger-Niveau.', qualifier: 'Du arbeitest mit KI, der systematische Aufbau fehlt aber noch.',
+               body: 'Genau der richtige Punkt, um Grundlagen sauber aufzubauen. Mit deinem Mindset und ein bisschen Struktur wirst du sehr schnell sehr weit kommen.' },
+    exp_anf: { level: 'anf', headline: 'Du bist Anfänger — mit dem Anspruch eines Experten.', qualifier: 'Im Alltag stehst du gerade noch im Aufbau.',
+               body: 'Genau hier hat ein systematischer Einstieg den größten Hebel. Mit deinem Anspruch wirst du den Weg zum Experten viel schneller gehen als die meisten.' },
+    exp_fg:  { level: 'fg',  headline: 'Aktuell bist du Fortgeschritten.',                    qualifier: 'In einigen Bereichen bist du schon weit — der Sprung zum Experten steht bevor.',
+               body: 'Die Basis ist da. Was noch fehlt, sind die letzten Bausteine — eigene Werkzeuge, Multi-Agent, strategische Tiefe. Dort holst du gezielt das raus, was den Sprung ausmacht.' }
   };
 
   // ===========================================================
@@ -698,34 +630,25 @@
 
   const state = {
     selfPick: null,    // 'anf' | 'fg' | 'exp'
-    answers: [],       // Array<-1|0|1>
-    step: 0            // 0..4 (0 = Q1 splitter)
+    answers: [],       // Array<-1|0|1>, Länge bis zu 7
+    step: 0            // 0 = Q1; 1..7 = Q2..Q8; 8 = Result
   };
 
   // ===========================================================
-  // Logik: Outcome berechnen
+  // Logik: Score → Level → Outcome
   // ===========================================================
+
+  function scoreToLevel(score) {
+    if (score <= -3) return 'anf';
+    if (score >=  4) return 'exp';
+    return 'fg';
+  }
 
   function resolveOutcome(selfPick, answers) {
     const score = answers.reduce((a, b) => a + b, 0);
-    if (selfPick === 'anf') {
-      if (score >= 2) return RESULTS.anf_upgrade;
-      if (score === 1) return RESULTS.anf_tendency_up;
-      return RESULTS.anf_pure;
-    }
-    if (selfPick === 'fg') {
-      if (score >= 2) return RESULTS.fg_upgrade;
-      if (score === 1) return RESULTS.fg_tendency_up;
-      if (score === 0) return RESULTS.fg_pure;
-      if (score === -1) return RESULTS.fg_tendency_down;
-      return RESULTS.fg_downgrade; // -2 oder -3
-    }
-    if (selfPick === 'exp') {
-      if (score === -3) return RESULTS.exp_downgrade_big;
-      if (score === -2) return RESULTS.exp_downgrade;
-      if (score === -1) return RESULTS.exp_tendency_down;
-      return RESULTS.exp_pure; // 0 oder höher
-    }
+    const level = scoreToLevel(score);
+    const key = `${selfPick}_${level}`;
+    return RESULTS[key];
   }
 
   // ===========================================================
@@ -754,13 +677,12 @@
     `;
     frame.innerHTML = html;
     bindQ1();
-    focusFirst();
   }
 
   function renderFollowup(qIndex) {
-    const path = state.selfPick;
-    const q = FLOW[path][qIndex];
-    const stepNum = qIndex + 2;
+    const q = QUESTIONS[qIndex];
+    const stepNum = qIndex + 2; // Q2 entspricht Step 2
+    const total = TOTAL_STEPS;
     const html = `
       <div class="screen active">
         ${renderProgress(stepNum)}
@@ -776,19 +698,17 @@
         </div>
         <div class="screen-footer">
           <button type="button" class="btn-back" data-back>← zurück</button>
-          <span>Frage ${stepNum} von 4</span>
+          <span>Frage ${stepNum} von ${total}</span>
         </div>
         <div class="keyhint">Tasten <kbd>1</kbd> <kbd>2</kbd> <kbd>3</kbd> · <kbd>←</kbd> zurück</div>
       </div>
     `;
     frame.innerHTML = html;
     bindFollowup();
-    focusFirst();
   }
 
   function renderResult() {
     const r = resolveOutcome(state.selfPick, state.answers);
-    const lvl = LEVELS[r.level];
     const html = `
       <div class="screen active">
         <div class="result">
@@ -796,16 +716,14 @@
           <h1 class="headline">${formatHeadline(r.headline, r.level)}</h1>
           ${r.qualifier ? `<p class="qualifier">${r.qualifier}</p>` : ''}
           <p class="body">${r.body}</p>
-          <div class="cta-row">
-            <button type="button" class="btn-secondary" data-restart>Test wiederholen</button>
-            <button type="button" class="btn-primary" data-share>Ergebnis teilen</button>
-          </div>
-          <div class="invite">
-            <p class="invite-headline">Schau dich gerne in unserer Akademie um.</p>
-            <p class="invite-sub">Lehrgänge, Seminare und Specials — finde, was zu dir passt.</p>
-            <a class="btn-invite" href="https://ai-pa.ai/akademie/" target="_top" rel="noopener">
+          <div class="cta-stack">
+            <a class="cta-primary" href="${AKADEMIE_URL}" target="_top" rel="noopener">
               Zur Akademie <span class="arrow">→</span>
             </a>
+            <div class="cta-secondary-row">
+              <button type="button" class="btn-secondary" data-restart>Test wiederholen</button>
+              <button type="button" class="btn-secondary" data-share>Ergebnis teilen</button>
+            </div>
           </div>
         </div>
       </div>
@@ -815,7 +733,7 @@
   }
 
   function formatHeadline(text, levelCls) {
-    // Letztes Wort einfärben (Anfänger / Fortgeschritten / Experte / Anfänger.)
+    // Erstes Vorkommen eines Level-Worts einfärben.
     const targets = ['Anfänger', 'Fortgeschritten', 'Experte'];
     for (const t of targets) {
       if (text.includes(t)) {
@@ -826,10 +744,10 @@
   }
 
   function renderProgress(stepNum) {
-    const pct = (stepNum / 4) * 100;
+    const pct = (stepNum / TOTAL_STEPS) * 100;
     return `
       <div class="progress">
-        <span class="step">Schritt ${stepNum} / 4</span>
+        <span class="step">Schritt ${stepNum} / ${TOTAL_STEPS}</span>
         <div class="bar"><div class="fill" style="width: ${pct}%"></div></div>
       </div>
     `;
@@ -856,7 +774,7 @@
         const score = parseInt(btn.dataset.score, 10);
         state.answers[state.step - 1] = score;
         state.step++;
-        if (state.step <= 3) {
+        if (state.step <= QUESTIONS.length) {
           renderFollowup(state.step - 1);
         } else {
           renderResult();
@@ -874,7 +792,6 @@
 
   function goBack() {
     if (state.step <= 1) {
-      // Zurück zur Eingangsfrage
       state.selfPick = null;
       state.answers = [];
       state.step = 0;
@@ -925,7 +842,6 @@
   // ===========================================================
 
   document.addEventListener('keydown', (e) => {
-    // 1/2/3 wählen Antwort
     if (['1', '2', '3'].includes(e.key)) {
       const idx = parseInt(e.key, 10) - 1;
       const buttons = document.querySelectorAll('[data-pick], [data-score]');
@@ -934,30 +850,11 @@
         e.preventDefault();
       }
     }
-    // Backspace oder Pfeil-Links: zurück
-    if ((e.key === 'Backspace' || e.key === 'ArrowLeft') && state.step >= 1) {
-      const back = document.querySelector('[data-back]');
-      if (back) {
-        goBack();
-        e.preventDefault();
-      } else if (state.step >= 1 && state.step <= 3) {
-        // Zurück auch ohne sichtbaren Button (z.B. focus auf body)
-        goBack();
-        e.preventDefault();
-      }
+    if ((e.key === 'Backspace' || e.key === 'ArrowLeft') && state.step >= 1 && state.step <= QUESTIONS.length) {
+      goBack();
+      e.preventDefault();
     }
   });
-
-  // ===========================================================
-  // A11y: focus first interactive element
-  // ===========================================================
-
-  function focusFirst() {
-    setTimeout(() => {
-      const first = frame.querySelector('button');
-      if (first) first.focus({ preventScroll: true });
-    }, 50);
-  }
 
   // ===========================================================
   // Start
