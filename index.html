@@ -57,24 +57,12 @@
     border-bottom: 3px solid var(--primary);
   }
   .logo-bar .logo-mark {
-    width: 44px;
-    height: 28px;
+    height: 44px;
     display: flex;
     align-items: center;
     justify-content: center;
   }
-  .logo-bar .logo-mark svg { display: block; width: 100%; height: 100%; }
-  .logo-bar .label {
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--white-muted);
-    letter-spacing: 0.5px;
-    text-transform: uppercase;
-  }
-  .logo-bar .label .brand-accent {
-    color: var(--primary);
-    font-weight: 800;
-  }
+  .logo-bar .logo-mark img { display: block; height: 100%; width: auto; }
   .logo-bar .badge {
     margin-left: auto;
     display: inline-flex;
@@ -105,7 +93,7 @@
   }
   @media (max-width: 480px) {
     .logo-bar .badge { padding: 5px 10px; font-size: 10px; letter-spacing: 1px; }
-    .logo-bar .label { font-size: 12px; }
+    .logo-bar .logo-mark { height: 36px; }
   }
 
   /* ===== Page-Wrapper ===== */
@@ -558,15 +546,9 @@
 <body>
 
 <div class="logo-bar">
-  <div class="logo-mark" aria-label="AI Performance Academy">
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 40">
-      <path d="M 6 32 A 26 26 0 0 1 58 32" fill="none" stroke="#0A0A0A" stroke-width="3" stroke-linecap="butt"/>
-      <path d="M 50 32 A 26 26 0 0 1 58 32 L 56 28 L 50 30 Z" fill="#E10600"/>
-      <line x1="32" y1="32" x2="40" y2="14" stroke="#0A0A0A" stroke-width="2.5" stroke-linecap="round"/>
-      <circle cx="32" cy="32" r="2.5" fill="#0A0A0A"/>
-    </svg>
+  <div class="logo-mark">
+    <img src="logo.png" alt="AI Performance Academy">
   </div>
-  <span class="label"><span class="brand-accent">AI</span> Performance Academy</span>
   <span class="badge"><span class="dot"></span>Level-Test</span>
 </div>
 
