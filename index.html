@@ -42,67 +42,13 @@
   }
   ::selection { background: var(--primary); color: #fff; }
 
-  /* ===== Logo Bar ===== */
-  .logo-bar {
-    position: fixed;
-    top: 0; left: 0; right: 0;
-    background: rgba(255,255,255,0.92);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    padding: 26px 28px;
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    z-index: 100;
-    border-bottom: 3px solid var(--primary);
-  }
-  .logo-bar .logo-mark {
-    height: 44px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  .logo-bar .logo-mark img { display: block; height: 100%; width: auto; }
-  .logo-bar .badge {
-    margin-left: auto;
-    display: inline-flex;
-    align-items: center;
-    gap: 7px;
-    padding: 6px 14px;
-    border-radius: 999px;
-    background: var(--primary);
-    color: #fff;
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 1.2px;
-    text-transform: uppercase;
-    box-shadow: 0 4px 12px rgba(255,26,26,0.22);
-  }
-  .logo-bar .badge .dot {
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: #fff;
-    box-shadow: 0 0 0 0 rgba(255,255,255,0.7);
-    animation: pulse 2s infinite;
-  }
-  @keyframes pulse {
-    0%   { box-shadow: 0 0 0 0 rgba(255,255,255,0.7); }
-    70%  { box-shadow: 0 0 0 6px rgba(255,255,255,0); }
-    100% { box-shadow: 0 0 0 0 rgba(255,255,255,0); }
-  }
-  @media (max-width: 480px) {
-    .logo-bar .badge { padding: 5px 10px; font-size: 10px; letter-spacing: 1px; }
-    .logo-bar .logo-mark { height: 36px; }
-  }
-
   /* ===== Page-Wrapper ===== */
   .stage {
     min-height: 100vh;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 104px 24px 32px;
+    padding: 32px 24px;
   }
   .frame {
     width: 100%;
@@ -112,7 +58,6 @@
     border: 1.5px solid var(--primary);
     border-radius: 18px;
     padding: 60px 48px;
-    box-shadow: 0 20px 60px rgba(255,26,26,0.10), 0 0 0 6px rgba(255,26,26,0.04);
     position: relative;
     display: flex;
     flex-direction: column;
@@ -485,10 +430,8 @@
   }
 
   /* ===== Kompakter Modus für Laptops mit niedriger Bildschirmhöhe ===== */
-  /* Laptop: zentriert, Padding-top = Padding-bottom + Nav-Höhe (~83px),
-     damit die Karte optisch mittig zwischen Nav und Boden sitzt. */
   @media (max-height: 1000px) and (min-width: 721px) {
-    .stage { padding: 103px 24px 20px; align-items: center; }
+    .stage { padding: 20px 24px; align-items: center; }
     .frame { padding: 44px 42px; min-height: 560px; }
     .progress { margin-bottom: 22px; }
     .q-heading { font-size: clamp(1.4rem, 2.6vw, 1.8rem); }
@@ -510,11 +453,9 @@
     .cta-primary { padding: 12px 26px; font-size: 12.5px; }
   }
 
-  /* Sehr flache Screens: Nav schrumpfen, damit die Karte nicht eng wird. */
+  /* Sehr flache Screens: kompakteres Layout. */
   @media (max-height: 740px) and (min-width: 721px) {
-    .logo-bar { padding: 14px 24px; border-bottom-width: 2px; }
-    .logo-bar .badge { padding: 5px 12px; font-size: 10.5px; }
-    .stage { padding: 78px 24px 20px; }
+    .stage { padding: 20px 24px; }
     .frame { padding: 26px 32px; min-height: 460px; }
     .progress { margin-bottom: 14px; }
     .q-heading { font-size: clamp(1.15rem, 2vw, 1.4rem); }
@@ -530,7 +471,7 @@
   @media (max-width: 720px) {
     body { font-size: 16px; }
     .frame { padding: 36px 24px 36px; border-radius: 0; border: none; }
-    .stage { padding: 104px 0 30px; }
+    .stage { padding: 30px 0; }
     .answer-grid { grid-template-columns: 1fr; gap: 12px; }
     .answer-card { padding: 22px 18px; }
     .q-heading { font-size: 1.6rem; }
@@ -544,13 +485,6 @@
 </style>
 </head>
 <body>
-
-<div class="logo-bar">
-  <div class="logo-mark">
-    <img src="logo.png" alt="AI Performance Academy">
-  </div>
-  <span class="badge"><span class="dot"></span>Level-Test</span>
-</div>
 
 <div class="stage">
   <div class="frame" id="frame"></div>
