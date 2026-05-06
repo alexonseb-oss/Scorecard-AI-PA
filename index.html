@@ -14,20 +14,20 @@
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 40'><path d='M 6 32 A 26 26 0 0 1 58 32' fill='none' stroke='%23000' stroke-width='3'/><path d='M 50 32 A 26 26 0 0 1 58 32 L 56 28 L 50 30 Z' fill='%23E10600'/><line x1='32' y1='32' x2='40' y2='14' stroke='%23000' stroke-width='2.5' stroke-linecap='round'/><circle cx='32' cy='32' r='2.5' fill='%23000'/></svg>">
 <style>
   :root {
-    --bg: #0a0a0a;
-    --bg-card: #111111;
-    --bg-card-hover: #1a1a1a;
+    --bg: #FAFAFA;
+    --bg-card: #FFFFFF;
+    --bg-card-hover: #F4F4F5;
     --gray: #767D8C;
-    --gray-light: #9DA3AF;
-    --gray-dark: #2a2a2a;
-    --white: #FFFFFF;
-    --white-muted: #E5E5E5;
+    --gray-light: #525968;
+    --gray-dark: #E5E7EB;
+    --white: #0A0A0A;
+    --white-muted: #1F2937;
     --primary: #FF1A1A;
     --primary-light: #FF4444;
     --primary-dark: #CC1515;
-    --anfaenger: #22C55E;
-    --fortgeschritten: #F59E0B;
-    --experte: #EF4444;
+    --anfaenger: #16A34A;
+    --fortgeschritten: #D97706;
+    --experte: #DC2626;
   }
   * { box-sizing: border-box; }
   html, body { margin: 0; padding: 0; }
@@ -46,15 +46,15 @@
   .logo-bar {
     position: fixed;
     top: 0; left: 0; right: 0;
-    background: rgba(10,10,10,0.92);
+    background: rgba(255,255,255,0.92);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
-    padding: 12px 24px;
+    padding: 26px 28px;
     display: flex;
     align-items: center;
     gap: 14px;
     z-index: 100;
-    border-bottom: 1px solid var(--gray-dark);
+    border-bottom: 3px solid var(--primary);
   }
   .logo-bar .logo-mark {
     width: 44px;
@@ -67,9 +67,45 @@
   .logo-bar .label {
     font-size: 13px;
     font-weight: 600;
-    color: var(--gray-light);
+    color: var(--white-muted);
     letter-spacing: 0.5px;
     text-transform: uppercase;
+  }
+  .logo-bar .label .brand-accent {
+    color: var(--primary);
+    font-weight: 800;
+  }
+  .logo-bar .badge {
+    margin-left: auto;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 6px 14px;
+    border-radius: 999px;
+    background: var(--primary);
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    box-shadow: 0 4px 12px rgba(255,26,26,0.22);
+  }
+  .logo-bar .badge .dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #fff;
+    box-shadow: 0 0 0 0 rgba(255,255,255,0.7);
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse {
+    0%   { box-shadow: 0 0 0 0 rgba(255,255,255,0.7); }
+    70%  { box-shadow: 0 0 0 6px rgba(255,255,255,0); }
+    100% { box-shadow: 0 0 0 0 rgba(255,255,255,0); }
+  }
+  @media (max-width: 480px) {
+    .logo-bar .badge { padding: 5px 10px; font-size: 10px; letter-spacing: 1px; }
+    .logo-bar .label { font-size: 12px; }
   }
 
   /* ===== Page-Wrapper ===== */
@@ -78,18 +114,45 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 68px 24px 32px;
+    padding: 104px 24px 32px;
   }
   .frame {
     width: 100%;
     max-width: 760px;
+    min-height: 640px;
     background: var(--bg-card);
-    border: 1px solid var(--gray-dark);
+    border: 1.5px solid var(--primary);
     border-radius: 18px;
-    padding: 44px 48px;
-    box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+    padding: 60px 48px;
+    box-shadow: 0 20px 60px rgba(255,26,26,0.10), 0 0 0 6px rgba(255,26,26,0.04);
     position: relative;
+    display: flex;
+    flex-direction: column;
   }
+  .frame > .screen.active { flex: 1; display: flex; flex-direction: column; }
+  /* Q1 (Splitter mit answer-grid): drei gleich große Lücken —
+     Progress → Titel-Block → Karten → Karten-Unterseite.
+     Titel sitzt damit mittig zwischen Progress und Karten;
+     Karten sitzen mittig zwischen Titel und Karten-Unterseite.
+     Keyhint ist absolut am unteren Rand und nicht Teil der Verteilung. */
+  .frame > .screen.active:has(.answer-grid) .q-heading { margin-top: auto; }
+  .frame > .screen.active:has(.answer-grid) .answer-grid {
+    margin-top: auto;
+    margin-bottom: auto;
+  }
+  .frame > .screen.active:has(.answer-grid) .keyhint {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 24px;
+    margin: 0;
+  }
+  /* Q2–Q8: drei gleichmäßige Lücken (Headline-Gruppe / Antworten / Footer). */
+  .frame > .screen.active:has(.answer-list) .q-heading { margin-top: auto; }
+  .frame > .screen.active:has(.answer-list) .answer-list { margin-top: auto; }
+  .frame > .screen.active:has(.answer-list) .screen-footer { margin-top: auto; }
+  /* Result-Screen: Inhalt komplett vertikal zentrieren. */
+  .frame > .screen.active:has(.result) { justify-content: center; }
 
   /* ===== Screens (only one active) ===== */
   .screen { display: none; animation: fadeIn 0.32s ease; }
@@ -167,7 +230,7 @@
   }
   .answer-card:hover, .answer-card:focus-visible {
     transform: translateY(-4px);
-    box-shadow: 0 12px 40px rgba(0,0,0,0.4);
+    box-shadow: 0 12px 32px rgba(15,23,42,0.08);
     border-color: var(--lvl-color, var(--gray));
     background: var(--bg-card-hover);
     outline: none;
@@ -402,7 +465,7 @@
     border-radius: 10px;
     font-size: 14px;
     font-weight: 600;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    box-shadow: 0 10px 30px rgba(15,23,42,0.12);
     z-index: 200;
     transition: transform 0.32s cubic-bezier(.4,0,.2,1), opacity 0.32s;
     opacity: 0;
@@ -434,34 +497,52 @@
   }
 
   /* ===== Kompakter Modus für Laptops mit niedriger Bildschirmhöhe ===== */
-  @media (max-height: 850px) and (min-width: 721px) {
-    .stage { padding: 56px 24px 24px; }
-    .frame { padding: 32px 40px; }
+  /* Laptop: zentriert, Padding-top = Padding-bottom + Nav-Höhe (~83px),
+     damit die Karte optisch mittig zwischen Nav und Boden sitzt. */
+  @media (max-height: 1000px) and (min-width: 721px) {
+    .stage { padding: 103px 24px 20px; align-items: center; }
+    .frame { padding: 44px 42px; min-height: 560px; }
     .progress { margin-bottom: 22px; }
-    .q-heading { font-size: clamp(1.4rem, 2.8vw, 1.85rem); }
+    .q-heading { font-size: clamp(1.4rem, 2.6vw, 1.8rem); }
     .q-sub { font-size: 15px; margin-bottom: 22px; }
     .answer-card { padding: 18px 16px; }
     .answer-card .pill { margin-bottom: 10px; }
     .answer-card .title { font-size: 1rem; margin-bottom: 6px; }
     .answer-card .desc { font-size: 13.5px; }
     .answer-row { padding: 13px 18px; }
-    .answer-row .text { font-size: 16px; }
+    .answer-row .text { font-size: 15.5px; }
     .answer-row .letter { width: 28px; height: 28px; font-size: 12px; }
-    .screen-footer { margin-top: 22px; }
-    .keyhint { margin-top: 14px; }
+    .screen-footer { margin-top: 20px; }
+    .keyhint { margin-top: 12px; font-size: 10.5px; }
     .result { padding: 4px 0 0; }
     .result .stamp { margin-bottom: 16px; padding: 7px 16px; font-size: 10.5px; }
-    .result .headline { font-size: clamp(1.65rem, 3.6vw, 2.4rem); margin-bottom: 10px; }
-    .result .qualifier { font-size: 15.5px; margin-bottom: 14px; }
-    .result .body { font-size: 15.5px; margin-bottom: 22px; }
+    .result .headline { font-size: clamp(1.6rem, 3.4vw, 2.3rem); margin-bottom: 10px; }
+    .result .qualifier { font-size: 15px; margin-bottom: 14px; }
+    .result .body { font-size: 15px; margin-bottom: 20px; }
     .cta-primary { padding: 12px 26px; font-size: 12.5px; }
+  }
+
+  /* Sehr flache Screens: Nav schrumpfen, damit die Karte nicht eng wird. */
+  @media (max-height: 740px) and (min-width: 721px) {
+    .logo-bar { padding: 14px 24px; border-bottom-width: 2px; }
+    .logo-bar .badge { padding: 5px 12px; font-size: 10.5px; }
+    .stage { padding: 78px 24px 20px; }
+    .frame { padding: 26px 32px; min-height: 460px; }
+    .progress { margin-bottom: 14px; }
+    .q-heading { font-size: clamp(1.15rem, 2vw, 1.4rem); }
+    .q-sub { font-size: 13.5px; margin-bottom: 14px; }
+    .answer-card { padding: 14px 14px; }
+    .answer-card .desc { font-size: 13px; }
+    .answer-row { padding: 10px 14px; }
+    .answer-row .text { font-size: 14px; }
+    .keyhint { display: none; }
   }
 
   /* ===== Mobile ===== */
   @media (max-width: 720px) {
     body { font-size: 16px; }
     .frame { padding: 36px 24px 36px; border-radius: 0; border: none; }
-    .stage { padding: 70px 0 30px; }
+    .stage { padding: 104px 0 30px; }
     .answer-grid { grid-template-columns: 1fr; gap: 12px; }
     .answer-card { padding: 22px 18px; }
     .q-heading { font-size: 1.6rem; }
@@ -479,13 +560,14 @@
 <div class="logo-bar">
   <div class="logo-mark" aria-label="AI Performance Academy">
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 40">
-      <path d="M 6 32 A 26 26 0 0 1 58 32" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="butt"/>
+      <path d="M 6 32 A 26 26 0 0 1 58 32" fill="none" stroke="#0A0A0A" stroke-width="3" stroke-linecap="butt"/>
       <path d="M 50 32 A 26 26 0 0 1 58 32 L 56 28 L 50 30 Z" fill="#E10600"/>
-      <line x1="32" y1="32" x2="40" y2="14" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round"/>
-      <circle cx="32" cy="32" r="2.5" fill="#FFFFFF"/>
+      <line x1="32" y1="32" x2="40" y2="14" stroke="#0A0A0A" stroke-width="2.5" stroke-linecap="round"/>
+      <circle cx="32" cy="32" r="2.5" fill="#0A0A0A"/>
     </svg>
   </div>
-  <span class="label">AI Performance Academy</span>
+  <span class="label"><span class="brand-accent">AI</span> Performance Academy</span>
+  <span class="badge"><span class="dot"></span>Level-Test</span>
 </div>
 
 <div class="stage">
