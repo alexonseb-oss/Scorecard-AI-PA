@@ -13,21 +13,32 @@
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 40'><path d='M 6 32 A 26 26 0 0 1 58 32' fill='none' stroke='%23000' stroke-width='3'/><path d='M 50 32 A 26 26 0 0 1 58 32 L 56 28 L 50 30 Z' fill='%23E10600'/><line x1='32' y1='32' x2='40' y2='14' stroke='%23000' stroke-width='2.5' stroke-linecap='round'/><circle cx='32' cy='32' r='2.5' fill='%23000'/></svg>">
 <style>
+  /* ═══════════════════════════════════════════════════════════
+     LEVEL-TEST — F1-Fassung
+     Bausteine aus dem AI-PA-Brandkit: Startampel, Sektorleiste,
+     Nummernschild, Timing-Tower-Zeile, Zielflagge, Tacho-Gauge.
+     Regeln: Ziffern wandern nicht (tabular-nums) · Rot ist
+     rationiert (aktive Station, primärer CTA, Ergebnis-Bogen) ·
+     Ein Hover für alles (translateY(-2px) + Standardschatten).
+     ═══════════════════════════════════════════════════════════ */
   :root {
     --bg: #FAFAFA;
     --bg-card: #FFFFFF;
-    --bg-card-hover: #F4F4F5;
+    --bg-card-hover: #FBFCFD;
+    --ink: #16161B;
+    --slate: #34435C;
     --gray: #767D8C;
     --gray-light: #525968;
-    --gray-dark: #E5E7EB;
-    --white: #0A0A0A;
+    --line: #E4E7EC;
+    --line-soft: #EDF0F4;
+    --white: #16161B;
     --white-muted: #1F2937;
     --primary: #FF1A1A;
-    --primary-light: #FF4444;
-    --primary-dark: #CC1515;
+    --primary-dark: #E00F0F;
     --anfaenger: #16A34A;
     --fortgeschritten: #D97706;
     --experte: #DC2626;
+    --lift: rgba(31,31,31,.35) 0 8px 20px -8px;
   }
   * { box-sizing: border-box; }
   html, body { margin: 0; padding: 0; }
@@ -39,10 +50,11 @@
     font-size: 17px;
     min-height: 100vh;
     overflow-x: hidden;
+    font-variant-numeric: tabular-nums;
   }
   ::selection { background: var(--primary); color: #fff; }
 
-  /* ===== Page-Wrapper ===== */
+  /* ═════ Bühne + Rahmen ═════ */
   .stage {
     min-height: 100vh;
     display: flex;
@@ -52,442 +64,443 @@
   }
   .frame {
     width: 100%;
-    max-width: 760px;
+    max-width: 780px;
     min-height: 640px;
     background: var(--bg-card);
-    border: 1.5px solid var(--primary);
-    border-radius: 18px;
-    padding: 60px 48px;
+    border: 1px solid var(--line);
+    /* Die scharfe linke obere Ecke ist das Marken-Motiv der Site. */
+    border-radius: 0 18px 18px 18px;
+    overflow: hidden;
+    box-shadow: rgba(52,67,92,.14) 0 22px 60px -34px;
     position: relative;
     display: flex;
     flex-direction: column;
   }
-  .frame > .screen.active { flex: 1; display: flex; flex-direction: column; }
-  /* Q1 (Splitter mit answer-grid): drei gleich große Lücken —
-     Progress → Titel-Block → Karten → Karten-Unterseite.
-     Titel sitzt damit mittig zwischen Progress und Karten;
-     Karten sitzen mittig zwischen Titel und Karten-Unterseite.
-     Keyhint ist absolut am unteren Rand und nicht Teil der Verteilung. */
-  .frame > .screen.active:has(.answer-grid) .q-heading { margin-top: auto; }
-  .frame > .screen.active:has(.answer-grid) .answer-grid {
-    margin-top: auto;
-    margin-bottom: auto;
-  }
-  .frame > .screen.active:has(.answer-grid) .keyhint {
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: 24px;
-    margin: 0;
-  }
-  /* Q2–Q8: drei gleichmäßige Lücken (Headline-Gruppe / Antworten / Footer). */
-  .frame > .screen.active:has(.answer-list) .q-heading { margin-top: auto; }
-  .frame > .screen.active:has(.answer-list) .answer-list { margin-top: auto; }
-  .frame > .screen.active:has(.answer-list) .screen-footer { margin-top: auto; }
-  /* Result-Screen: Inhalt komplett vertikal zentrieren. */
-  .frame > .screen.active:has(.result) { justify-content: center; }
 
-  /* ===== Screens (only one active) ===== */
-  .screen { display: none; animation: fadeIn 0.32s ease; }
-  .screen.active { display: block; }
+  /* ═════ Kopfleiste — Timing-Tower-Bauform ═════ */
+  .tt-head {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    padding: 13px 22px;
+    background: var(--slate);
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+  /* Speed-Slashes: Manual-Textur, sehr leise gehalten. */
+  .tt-head::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(115deg,
+      transparent 0 14px, rgba(255,255,255,.055) 14px 16px);
+    pointer-events: none;
+  }
+  .tt-head.finish { background: var(--ink); }
+  .tt-head.finish::after {
+    background: repeating-conic-gradient(rgba(255,255,255,.17) 0% 25%, transparent 0% 50%) 0 0/16px 16px;
+    left: auto; width: 260px;
+    -webkit-mask-image: linear-gradient(90deg, transparent, #000 70%);
+            mask-image: linear-gradient(90deg, transparent, #000 70%);
+  }
+  .tt-l {
+    position: relative; z-index: 1;
+    display: inline-flex; align-items: center; gap: 12px;
+    font-size: 11px; font-weight: 700; letter-spacing: .14em;
+    text-transform: uppercase; color: #fff; white-space: nowrap;
+  }
+  .tt-r {
+    position: relative; z-index: 1;
+    font-size: 12px; font-weight: 700; letter-spacing: .1em;
+    color: rgba(255,255,255,.62);
+    font-variant-numeric: tabular-nums; white-space: nowrap;
+  }
+  .tt-r b { color: #fff; font-weight: 700; }
+
+  /* Startampel — drei geschrägte Lichter, füllen sich mit dem Fortschritt. */
+  .sl { display: inline-flex; gap: 3px; }
+  .sl i {
+    display: block; width: 5px; height: 14px;
+    transform: skewX(-16deg); border-radius: 1px;
+    background: rgba(255,255,255,.22);
+    transition: background .3s;
+  }
+  .sl i.on { background: var(--primary); }
+  /* Am Ziel wird aus der Ampel ein Karofeld. */
+  .sl.flag { width: 20px; height: 14px; transform: skewX(-16deg); overflow: hidden; border-radius: 1px;
+             background: repeating-conic-gradient(#fff 0% 25%, #16161B 0% 50%) 0 0/7px 7px; }
+
+  /* ═════ Sektorleiste — acht Segmente statt eines Balkens ═════ */
+  .sectors {
+    display: flex; gap: 3px;
+    padding: 0; background: var(--line);
+    flex-shrink: 0;
+  }
+  .sectors span {
+    flex: 1; height: 4px;
+    background: var(--line);
+    transition: background .35s cubic-bezier(.4,0,.2,1);
+  }
+  .sectors span.done { background: var(--slate); }
+  .sectors span.now  { background: var(--primary); }
+
+  /* ═════ Karten-Innenraum ═════ */
+  .body-pad {
+    flex: 1;
+    padding: 44px 48px 26px;
+    display: flex; flex-direction: column;
+    position: relative;
+  }
+  .screen { display: none; animation: fadeIn .32s ease; }
+  .screen.active { display: flex; flex-direction: column; flex: 1; }
   @keyframes fadeIn {
     from { opacity: 0; transform: translateY(10px); }
     to   { opacity: 1; transform: translateY(0); }
   }
+  /* Q1: drei gleich große Lücken (Titel / Karten / Unterseite). */
+  .screen.active:has(.answer-grid) .q-heading { margin-top: auto; }
+  .screen.active:has(.answer-grid) .answer-grid { margin-top: auto; margin-bottom: auto; }
+  .screen.active:has(.answer-grid) .keyhint {
+    position: absolute; left: 0; right: 0; bottom: 22px; margin: 0;
+  }
+  /* Q2–Q8: Kopfgruppe / Antworten / Fuß gleichmäßig verteilt. */
+  .screen.active:has(.answer-list) .q-heading   { margin-top: auto; }
+  .screen.active:has(.answer-list) .answer-list { margin-top: auto; }
+  .screen.active:has(.answer-list) .screen-footer { margin-top: auto; }
+  .screen.active:has(.result) { justify-content: center; }
 
-  /* ===== Progress ===== */
-  .progress {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    margin-bottom: 28px;
-  }
-  .progress .step {
-    font-size: 11px;
-    color: var(--gray);
-    font-weight: 700;
-    white-space: nowrap;
-    text-transform: uppercase;
-    letter-spacing: 1.5px;
-  }
-  .progress .bar {
-    flex: 1;
-    height: 4px;
-    background: var(--gray-dark);
-    border-radius: 2px;
-    overflow: hidden;
-  }
-  .progress .fill {
-    height: 100%;
-    background: var(--primary);
-    transition: width 0.4s cubic-bezier(.4,0,.2,1);
-    border-radius: 2px;
-  }
-
-  /* ===== Question heading ===== */
+  /* ═════ Frage ═════ */
   .q-heading {
-    font-size: clamp(1.5rem, 3.2vw, 2.15rem);
+    font-size: clamp(1.5rem, 3.2vw, 2.1rem);
     font-weight: 900;
-    color: var(--white);
-    letter-spacing: -0.02em;
-    line-height: 1.15;
+    color: var(--ink);
+    letter-spacing: -.02em;
+    line-height: 1.14;
     margin: 0 0 12px;
   }
   .q-heading .accent { color: var(--primary); }
   .q-sub {
-    font-size: 16px;
+    font-size: 15.5px;
     color: var(--gray-light);
     margin: 0 0 28px;
-    max-width: 600px;
+    max-width: 60ch;
     font-weight: 400;
   }
 
-  /* ===== Q1 Splitter cards ===== */
-  .answer-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 16px;
-  }
+  /* ═════ Q1 — Auswahlkarten in der Bauform der Site-Optionen ═════
+     `.opt` der Startseite: 1px Rand #E3E6EA, Radius 10, Hover nur
+     Randfarbe + zarter roter Grund. Auswahl-Elemente heben sich nicht
+     an — so steht es in button-standard.css. */
+  .answer-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
   .answer-card {
-    background: var(--bg-card);
-    border: 2px solid var(--gray-dark);
-    border-radius: 14px;
-    padding: 22px 20px;
+    background: #fff;
+    border: 1px solid #E3E6EA;
+    border-radius: 10px;
+    padding: 18px 18px 20px;
     cursor: pointer;
-    transition: all 0.25s;
-    text-align: left;
-    font-family: inherit;
-    color: inherit;
+    transition: .14s;
+    text-align: left; font-family: inherit; color: #1F1F1F;
     width: 100%;
-    display: block;
+    /* Buttons zentrieren ihren Inhalt von Haus aus — hier muss er oben
+       anliegen, sonst rutschen kürzere Karten im Raster nach unten. */
+    display: flex; flex-direction: column; align-items: stretch; justify-content: flex-start;
   }
   .answer-card:hover, .answer-card:focus-visible {
-    transform: translateY(-4px);
-    box-shadow: 0 12px 32px rgba(15,23,42,0.08);
-    border-color: var(--lvl-color, var(--gray));
-    background: var(--bg-card-hover);
+    border-color: var(--primary);
+    background: #FFF4F4;
     outline: none;
   }
   .answer-card.lvl-anf { --lvl-color: var(--anfaenger); }
   .answer-card.lvl-fg  { --lvl-color: var(--fortgeschritten); }
   .answer-card.lvl-exp { --lvl-color: var(--experte); }
 
-  .answer-card .pill {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 4px 12px;
-    border-radius: 999px;
-    font-size: 10px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    margin-bottom: 14px;
-    background: color-mix(in srgb, var(--lvl-color) 12%, transparent);
-    color: var(--lvl-color);
-    border: 1px solid color-mix(in srgb, var(--lvl-color) 40%, transparent);
+  /* Startlicht statt Kästchen — dieselbe Rolle wie `.opt .bx`,
+     nur in der geschrägten Form aus dem Brandkit. */
+  .light {
+    display: block; width: 7px; height: 18px; flex: 0 0 auto;
+    transform: skewX(-16deg); border-radius: 1px;
+    background: #B9BFC9; transition: .14s;
   }
-  .answer-card .pill .dot { width: 8px; height: 8px; border-radius: 50%; background: currentColor; }
+  .answer-card .slot-top { display: flex; align-items: center; gap: 10px; margin-bottom: 13px; }
+  .answer-card .light { background: var(--lvl-color); }
+  .answer-card .lvl {
+    font-size: 10.5px; font-weight: 700; letter-spacing: .13em;
+    text-transform: uppercase; color: var(--lvl-color);
+  }
   .answer-card .title {
-    font-size: 1.1rem;
-    font-weight: 800;
-    color: var(--white);
-    margin-bottom: 8px;
+    font-size: 16.5px; font-weight: 700; color: #16161B;
+    letter-spacing: -.01em; margin-bottom: 7px; line-height: 1.25;
   }
-  .answer-card .desc {
-    font-size: 14.5px;
-    color: var(--gray-light);
-    line-height: 1.5;
-  }
+  .answer-card .desc { font-size: 14px; color: var(--gray-light); line-height: 1.5; }
 
-  /* ===== Q2-Q8 list answers ===== */
-  .answer-list {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
+  /* ═════ Q2–Q8 — Antwortzeilen in der Bauform der Site-Optionen ═════
+     Links das Startlicht, rechts die Rev-Leiste: die Optionen sind
+     immer aufsteigend sortiert, die Leiste zeigt die Stufe. */
+  .answer-list { display: flex; flex-direction: column; gap: 8px; }
   .answer-row {
-    background: var(--bg-card);
-    border: 2px solid var(--gray-dark);
-    border-radius: 12px;
-    padding: 15px 20px;
+    background: #fff;
+    border: 1px solid #E3E6EA;
+    border-radius: 10px;
+    min-height: 50px;
+    padding: 12px 16px;
     cursor: pointer;
-    transition: all 0.2s;
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    font-family: inherit;
-    color: inherit;
-    width: 100%;
-    text-align: left;
+    transition: .14s;
+    display: grid; grid-template-columns: 7px minmax(0,1fr) 30px;
+    align-items: center; gap: 13px;
+    font-family: inherit; color: #1F1F1F;
+    width: 100%; text-align: left;
   }
   .answer-row:hover, .answer-row:focus-visible {
     border-color: var(--primary);
-    background: var(--bg-card-hover);
+    background: #FFF4F4;
     outline: none;
   }
-  .answer-row .letter {
-    width: 32px; height: 32px;
-    border-radius: 50%;
-    border: 2px solid var(--gray);
-    display: flex; align-items: center; justify-content: center;
-    font-weight: 800;
-    color: var(--gray-light);
-    font-size: 13px;
-    flex-shrink: 0;
-    transition: all 0.2s;
-  }
-  .answer-row:hover .letter, .answer-row:focus-visible .letter {
-    border-color: var(--primary);
-    color: var(--primary);
-  }
+  .answer-row:hover .light, .answer-row:focus-visible .light { background: var(--primary); }
   .answer-row .text {
-    font-size: 17px;
-    color: var(--white-muted);
-    font-weight: 500;
+    font-size: 15px; font-weight: 500; line-height: 1.35; color: #1F1F1F;
   }
+  .answer-row:hover .text, .answer-row:focus-visible .text { font-weight: 700; color: #16161B; }
+  .rev { display: flex; gap: 3px; align-items: flex-end; }
+  .rev i { width: 6px; height: 6px; border-radius: 1px; background: #E8EBEF; transition: .14s; }
+  .rev i:nth-child(2) { height: 10px; }
+  .rev i:nth-child(3) { height: 14px; }
+  .rev i.on { background: var(--slate); }
+  .answer-row:hover .rev i.on, .answer-row:focus-visible .rev i.on { background: var(--primary); }
 
-  /* ===== Footer of screen (back button) ===== */
+  /* ═════ Fußzeile der Frage ═════ */
   .screen-footer {
-    margin-top: 28px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    color: var(--gray);
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 1.5px;
-    font-weight: 600;
+    margin-top: 26px;
+    display: flex; justify-content: space-between; align-items: center;
+    color: var(--gray); font-size: 11px;
+    text-transform: uppercase; letter-spacing: .12em; font-weight: 700;
+    font-variant-numeric: tabular-nums;
   }
   .btn-back {
     font-family: inherit;
-    background: transparent;
-    border: 1px solid var(--gray-dark);
-    border-radius: 8px;
-    padding: 8px 18px;
-    font-size: 11px;
-    color: var(--gray-light);
+    background: #fff; color: #1F1F1F;
+    border: 1px solid #D9DDE3; border-radius: 999px;
+    min-height: 40px; padding: 9px 20px;
+    font-size: 11px; letter-spacing: .12em; text-transform: uppercase; font-weight: 700;
     cursor: pointer;
-    text-transform: uppercase;
-    letter-spacing: 1.5px;
-    font-weight: 700;
-    transition: all 0.2s;
+    display: inline-flex; align-items: center; gap: 8px;
+    transition: transform .15s, box-shadow .15s, border-color .15s, color .15s;
   }
-  .btn-back:hover { border-color: var(--gray); color: var(--white); }
+  .btn-back:hover { transform: translateY(-2px); box-shadow: var(--lift); }
 
-  /* ===== Result Screen ===== */
-  .result {
-    text-align: center;
-    padding: 12px 0 4px;
+  /* ═════ Ergebnis ═════ */
+  .result { text-align: center; padding: 8px 0 4px; }
+
+  /* Tacho — das Logo-Motiv der Marke als Auswertung.
+     Schwarzer Bogen = erreicht, roter Bogen = der nächste Schritt. */
+  .gauge { width: 268px; margin: 0 auto 4px; }
+  .gauge svg { display: block; width: 100%; height: auto; }
+  /* Die Zahl sitzt per negativem Abstand im Bogen — kein Überlappen möglich. */
+  .gauge .v {
+    margin-top: -54px;
+     font-size: 44px; font-weight: 700;
+    color: var(--ink); line-height: 1; letter-spacing: -.02em;
+    font-variant-numeric: tabular-nums;
   }
+  .gauge .l {
+    margin-top: 8px;
+    font-size: 10px; font-weight: 700; letter-spacing: .16em;
+    text-transform: uppercase; color: var(--gray);
+  }
+  .zones {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    max-width: 340px; margin: 14px auto 22px;
+    font-size: 9px; font-weight: 700; letter-spacing: .12em;
+    text-transform: uppercase; color: #A8AEBA;
+  }
+  .zones span.on { color: var(--ink); }
+
   .result .stamp {
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    padding: 8px 18px;
-    border-radius: 999px;
-    font-size: 11px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    margin-bottom: 22px;
-    border: 2px solid;
+    display: inline-flex; align-items: center; gap: 9px;
+    padding: 6px 8px 6px 6px; border-radius: 6px;
+    background: var(--ink); color: #fff;
+    font-size: 10px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: .14em;
+    margin-bottom: 16px;
   }
-  .result .stamp.anf { color: var(--anfaenger); border-color: var(--anfaenger); background: color-mix(in srgb, var(--anfaenger) 10%, transparent); }
-  .result .stamp.fg  { color: var(--fortgeschritten); border-color: var(--fortgeschritten); background: color-mix(in srgb, var(--fortgeschritten) 10%, transparent); }
-  .result .stamp.exp { color: var(--experte); border-color: var(--experte); background: color-mix(in srgb, var(--experte) 10%, transparent); }
-  .result .stamp .dot { width: 10px; height: 10px; border-radius: 50%; background: currentColor; }
+  .result .stamp .tag {
+     font-size: 10px; font-weight: 700;
+    padding: 3px 7px; border-radius: 3px; letter-spacing: .06em;
+    background: rgba(255,255,255,.14);
+  }
+  .result .stamp.anf .tag { background: var(--anfaenger); }
+  .result .stamp.fg  .tag { background: var(--fortgeschritten); }
+  .result .stamp.exp .tag { background: var(--experte); }
+  .result .stamp .txt { padding-right: 6px; }
 
   .result .headline {
-    font-size: clamp(1.85rem, 4.2vw, 2.85rem);
-    font-weight: 900;
-    color: var(--white);
-    letter-spacing: -0.02em;
-    line-height: 1.1;
-    margin: 0 0 12px;
+    font-size: clamp(1.7rem, 3.8vw, 2.5rem);
+    font-weight: 900; color: var(--ink);
+    letter-spacing: -.025em; line-height: 1.1;
+    margin: 0 0 12px; max-width: 22ch;
+    margin-left: auto; margin-right: auto;
   }
   .result .headline .level-word.anf { color: var(--anfaenger); }
   .result .headline .level-word.fg  { color: var(--fortgeschritten); }
   .result .headline .level-word.exp { color: var(--experte); }
   .result .qualifier {
-    font-size: 17px;
-    color: var(--gray-light);
-    font-weight: 600;
-    margin: 0 0 16px;
-    max-width: 600px;
-    margin-left: auto; margin-right: auto;
+    font-size: 16px; color: var(--gray-light); font-weight: 600;
+    margin: 0 auto 14px; max-width: 56ch;
   }
   .result .body {
-    font-size: 16.5px;
-    color: var(--gray-light);
-    max-width: 600px;
-    margin: 0 auto 28px;
-    line-height: 1.6;
-    font-weight: 400;
+    font-size: 15.5px; color: var(--gray-light);
+    max-width: 58ch; margin: 0 auto 18px; line-height: 1.6; font-weight: 400;
+  }
+  /* Meta-Zeile: der einzige Ort für Zahlen und Middots. */
+  .metaline {
+    font-size: 11px; font-weight: 700; letter-spacing: .1em;
+    text-transform: uppercase; color: #8A919F;
+    margin: 0 0 24px; font-variant-numeric: tabular-nums;
   }
 
-  /* ===== CTA-Stack auf Ergebnis-Seite ===== */
-  .cta-stack {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 14px;
+  /* ═════ Knöpfe — Site-Standard, ein Hover für alles ═════
+     Anordnung wie im CTA-Kasten der Methode-Seite: primär und sekundär
+     nebeneinander in einer Reihe, das Nachrangige als Textlink darunter. */
+  .cta-row {
+    display: flex; gap: 12px; justify-content: center; align-items: center; flex-wrap: wrap;
   }
   .cta-primary {
     font-family: inherit;
-    background: var(--primary);
-    color: #fff;
-    border: none;
-    padding: 14px 32px;
-    font-size: 13px;
-    font-weight: 700;
-    border-radius: 10px;
-    cursor: pointer;
-    text-transform: uppercase;
-    letter-spacing: 1.5px;
-    transition: all 0.2s;
-    text-decoration: none;
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    box-shadow: 0 2px 8px rgba(255,26,26,0.12);
+    background: var(--primary); color: #fff; border: none;
+    min-height: 52px; padding: 14px 30px;
+    font-size: 16px; font-weight: 700; line-height: 1.2;
+    border-radius: 999px; cursor: pointer; text-decoration: none;
+    display: inline-flex; align-items: center; justify-content: center; gap: 9px;
+    transition: transform .15s, box-shadow .15s, background .15s;
   }
-  .cta-primary:hover {
-    background: var(--primary-light);
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(255,26,26,0.22);
-  }
-  .cta-primary .arrow {
-    transition: transform 0.2s;
-    display: inline-block;
-  }
-  .cta-primary:hover .arrow { transform: translateX(4px); }
+  .cta-primary:hover { transform: translateY(-2px); box-shadow: var(--lift); }
+  /* Der weiße Punkt ist das `btn-r`-Detail der Site. */
+  .cta-primary .dot { width: 7px; height: 7px; border-radius: 999px; background: #fff; flex: 0 0 auto; }
+  .cta-primary .ar { display: inline-block; transition: transform .15s; }
+  .cta-primary:hover .ar { transform: translateX(3px); }
 
-  .cta-secondary-row {
-    display: flex;
-    gap: 10px;
-    justify-content: center;
-    flex-wrap: wrap;
-  }
   .btn-secondary {
     font-family: inherit;
-    background: transparent;
-    color: var(--white-muted);
-    border: 1px solid var(--gray);
-    padding: 11px 22px;
-    font-size: 12px;
-    font-weight: 700;
-    border-radius: 8px;
-    cursor: pointer;
-    text-transform: uppercase;
-    letter-spacing: 1.2px;
-    transition: all 0.2s;
+    background: #fff; color: #1F1F1F; border: 1px solid #D9DDE3;
+    min-height: 52px; padding: 14px 28px;
+    font-size: 16px; font-weight: 700; line-height: 1.2;
+    border-radius: 999px; cursor: pointer;
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    transition: transform .15s, box-shadow .15s, border-color .15s, color .15s;
   }
-  .btn-secondary:hover { border-color: var(--white); color: var(--white); }
+  .btn-secondary:hover { transform: translateY(-2px); box-shadow: var(--lift); }
 
-  /* ===== Toast ===== */
+  /* Nachrangig: Textlink statt drittem Knopf. */
+  .cta-note {
+    display: block; margin-top: 18px;
+    background: none; border: none; padding: 0; cursor: pointer;
+    font-family: inherit; font-size: 13.5px; color: var(--gray);
+    margin-left: auto; margin-right: auto;
+  }
+  .cta-note b { font-weight: 600; color: #1F1F1F; text-decoration: underline; }
+  .cta-note:hover b { color: var(--primary); }
+
+  /* ═════ Toast ═════ */
   .toast {
-    position: fixed;
-    bottom: 30px;
-    left: 50%;
+    position: fixed; bottom: 30px; left: 50%;
     transform: translateX(-50%) translateY(80px);
-    background: var(--bg-card);
-    border: 1px solid var(--primary);
-    color: var(--white);
-    padding: 12px 20px;
-    border-radius: 10px;
-    font-size: 14px;
-    font-weight: 600;
-    box-shadow: 0 10px 30px rgba(15,23,42,0.12);
+    background: var(--ink); border: none; color: #fff;
+    padding: 12px 20px; border-radius: 0 10px 10px 10px;
+    font-size: 14px; font-weight: 600;
+    box-shadow: rgba(15,23,42,.22) 0 10px 30px -10px;
     z-index: 200;
-    transition: transform 0.32s cubic-bezier(.4,0,.2,1), opacity 0.32s;
-    opacity: 0;
-    pointer-events: none;
+    transition: transform .32s cubic-bezier(.4,0,.2,1), opacity .32s;
+    opacity: 0; pointer-events: none;
   }
-  .toast.show {
-    transform: translateX(-50%) translateY(0);
-    opacity: 1;
-  }
+  .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
 
-  /* ===== Tastaturhinweis ===== */
+  /* ═════ Tastaturhinweis ═════ */
   .keyhint {
-    text-align: center;
-    margin-top: 18px;
-    font-size: 11px;
-    color: var(--gray);
-    text-transform: uppercase;
-    letter-spacing: 1.5px;
+    text-align: center; margin-top: 16px;
+    font-size: 10.5px; color: #A8AEBA;
+    text-transform: uppercase; letter-spacing: .12em;
   }
   .keyhint kbd {
-    display: inline-block;
-    padding: 2px 7px;
-    background: var(--gray-dark);
-    border-radius: 4px;
-    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-    font-size: 10px;
-    color: var(--white-muted);
-    margin: 0 2px;
+    display: inline-block; padding: 2px 6px;
+    background: #F2F4F7; border: 1px solid var(--line); border-radius: 4px;
+     font-size: 10px; color: var(--gray-light);
+    margin: 0 1px;
   }
 
-  /* ===== Kompakter Modus für Laptops mit niedriger Bildschirmhöhe ===== */
+  /* ═════ Laptops mit niedriger Bildschirmhöhe ═════ */
   @media (max-height: 1000px) and (min-width: 721px) {
     .stage { padding: 0 24px; align-items: flex-start; }
-    .frame { padding: 44px 42px; min-height: 560px; }
-    .progress { margin-bottom: 22px; }
+    .frame { min-height: 560px; }
+    .body-pad { padding: 32px 42px 22px; }
     .q-heading { font-size: clamp(1.4rem, 2.6vw, 1.8rem); }
     .q-sub { font-size: 15px; margin-bottom: 22px; }
-    .answer-card { padding: 18px 16px; }
-    .answer-card .pill { margin-bottom: 10px; }
-    .answer-card .title { font-size: 1rem; margin-bottom: 6px; }
+    .answer-card { padding: 15px 15px 17px; }
+    .answer-card .slot-top { margin-bottom: 10px; }
+    .answer-card .title { font-size: 15.5px; margin-bottom: 6px; }
     .answer-card .desc { font-size: 13.5px; }
-    .answer-row { padding: 13px 18px; }
-    .answer-row .text { font-size: 15.5px; }
-    .answer-row .letter { width: 28px; height: 28px; font-size: 12px; }
+    .answer-row { min-height: 46px; padding: 10px 14px; }
+    .answer-row .text { font-size: 14.5px; }
     .screen-footer { margin-top: 20px; }
-    .keyhint { margin-top: 12px; font-size: 10.5px; }
-    .result { padding: 4px 0 0; }
-    .result .stamp { margin-bottom: 16px; padding: 7px 16px; font-size: 10.5px; }
-    .result .headline { font-size: clamp(1.6rem, 3.4vw, 2.3rem); margin-bottom: 10px; }
-    .result .qualifier { font-size: 15px; margin-bottom: 14px; }
-    .result .body { font-size: 15px; margin-bottom: 20px; }
-    .cta-primary { padding: 12px 26px; font-size: 12.5px; }
+    .keyhint { margin-top: 12px; }
+    .result { padding: 2px 0 0; }
+    .gauge { width: 226px; }
+    .gauge .v { font-size: 36px; margin-top: -44px; }
+    .zones { margin-bottom: 16px; }
+    .result .stamp { margin-bottom: 12px; }
+    .result .headline { font-size: clamp(1.55rem, 3.2vw, 2.15rem); margin-bottom: 10px; }
+    .result .qualifier { font-size: 15px; margin-bottom: 12px; }
+    .result .body { font-size: 15px; margin-bottom: 14px; }
+    .metaline { margin-bottom: 18px; }
   }
 
-  /* Sehr flache Screens: kompakteres Layout. */
+  /* ═════ Sehr flache Bildschirme ═════ */
   @media (max-height: 740px) and (min-width: 721px) {
-    .stage { padding: 20px 24px; }
-    .frame { padding: 26px 32px; min-height: 460px; }
-    .progress { margin-bottom: 14px; }
+    .stage { padding: 18px 24px; }
+    .frame { min-height: 460px; }
+    .body-pad { padding: 22px 32px 18px; }
     .q-heading { font-size: clamp(1.15rem, 2vw, 1.4rem); }
     .q-sub { font-size: 13.5px; margin-bottom: 14px; }
-    .answer-card { padding: 14px 14px; }
+    .answer-card { padding: 12px 12px 14px; }
     .answer-card .desc { font-size: 13px; }
-    .answer-row { padding: 10px 14px; }
+    .answer-row { min-height: 42px; padding: 8px 13px; }
     .answer-row .text { font-size: 14px; }
+    .gauge { width: 186px; }
+    .gauge .v { font-size: 30px; margin-top: -36px; }
     .keyhint { display: none; }
   }
 
-  /* ===== Mobile ===== */
+  /* ═════ Mobil ═════ */
   @media (max-width: 720px) {
     body { font-size: 16px; }
-    .frame { padding: 36px 24px 36px; border-radius: 0; border: none; }
-    .stage { padding: 30px 0; }
-    .answer-grid { grid-template-columns: 1fr; gap: 12px; }
-    .answer-card { padding: 22px 18px; }
-    .q-heading { font-size: 1.6rem; }
-    .answer-row { padding: 16px 18px; }
-    .answer-row .text { font-size: 16px; }
-    .q-sub { font-size: 16px; }
-    .result .body { font-size: 16.5px; }
-    .result .qualifier { font-size: 17px; }
-    .cta-primary { padding: 12px 24px; font-size: 12.5px; }
+    .stage { padding: 0; }
+    .frame { border-radius: 0; border-left: none; border-right: none; }
+    .tt-head { padding: 12px 20px; }
+    .body-pad { padding: 30px 22px 26px; }
+    .answer-grid { grid-template-columns: 1fr; gap: 10px; }
+    .answer-card { padding: 16px 16px 18px; }
+    .q-heading { font-size: 1.55rem; }
+    .q-sub { font-size: 15.5px; }
+    .answer-row { padding: 13px 15px; gap: 12px; }
+    .answer-row .text { font-size: 15.5px; }
+    .gauge { width: 224px; }
+    .gauge .v { font-size: 36px; margin-top: -44px; }
+    .zones { max-width: 300px; font-size: 8.5px; }
+    .result .body { font-size: 15.5px; }
+    .result .qualifier { font-size: 16px; }
+    .cta-row { flex-direction: column; gap: 10px; }
+    .cta-primary, .btn-secondary { width: 100%; }
   }
 </style>
 </head>
 <body>
 
 <div class="stage">
-  <div class="frame" id="frame"></div>
+  <div class="frame">
+    <div class="tt-head" id="tt-head"></div>
+    <div class="sectors" id="sectors"></div>
+    <div class="body-pad" id="frame"></div>
+  </div>
 </div>
 
 <div class="toast" id="toast">Ergebnis kopiert</div>
@@ -500,10 +513,11 @@
   const TOTAL_STEPS = 8;          // 1 Splitter + 7 Folgefragen
   const AKADEMIE_URL = 'https://ai-pa.ai/sutherland/#finder';
 
+  // short = Dreibuchstaben-Kürzel für die Ergebnis-Plakette (Timing-Anzeige).
   const LEVELS = {
-    anf: { name: 'Anfänger', cls: 'anf' },
-    fg:  { name: 'Fortgeschritten', cls: 'fg' },
-    exp: { name: 'Experte', cls: 'exp' }
+    anf: { name: 'Anfänger',        cls: 'anf', short: 'ANF' },
+    fg:  { name: 'Fortgeschritten', cls: 'fg',  short: 'FGS' },
+    exp: { name: 'Experte',         cls: 'exp', short: 'EXP' }
   };
 
   // Q1 — Selbsteinschätzung als Hypothese
@@ -646,8 +660,17 @@
     const score = answers.reduce((a, b) => a + b, 0);
     const level = scoreToLevel(score);
     const key = `${selfPick}_${level}`;
-    return RESULTS[key];
+    return { ...RESULTS[key], score };
   }
+
+  // Rohscore (−7 … +7 über sieben Fragen) auf eine Tachozahl 0–100 abbilden.
+  const SCORE_MIN = -QUESTIONS.length, SCORE_MAX = QUESTIONS.length;
+  function scoreToValue(score) {
+    return Math.round((score - SCORE_MIN) / (SCORE_MAX - SCORE_MIN) * 100);
+  }
+  // Level-Schwellen auf derselben Skala — sie markieren die Zonen im Tacho.
+  const ZONE_FG  = scoreToValue(-2);   // ab hier Fortgeschritten
+  const ZONE_EXP = scoreToValue(4);    // ab hier Experte
 
   // ===========================================================
   // Render
@@ -656,78 +679,136 @@
   const frame = document.getElementById('frame');
 
   function renderQ1() {
-    const html = `
+    renderChrome(1);
+    frame.innerHTML = `
       <div class="screen active">
-        ${renderProgress(1)}
         <h1 class="q-heading">${Q1.headline[0]} <span class="accent">${Q1.headline[1]}</span></h1>
         <p class="q-sub">${Q1.sub}</p>
         <div class="answer-grid">
           ${Q1.options.map((o, i) => `
             <button type="button" class="answer-card lvl-${o.cls}" data-pick="${o.value}" data-idx="${i}">
-              <span class="pill"><span class="dot"></span>${o.pill}</span>
+              <span class="slot-top">
+                <span class="light"></span>
+                <span class="lvl">${o.pill}</span>
+              </span>
               <div class="title">${o.title}</div>
               <div class="desc">${o.desc}</div>
             </button>
           `).join('')}
         </div>
-        <div class="keyhint">Tipp: Tasten <kbd>1</kbd> <kbd>2</kbd> <kbd>3</kbd> wählen direkt aus</div>
+        <div class="keyhint">Tasten <kbd>1</kbd> <kbd>2</kbd> <kbd>3</kbd> wählen direkt aus</div>
       </div>
     `;
-    frame.innerHTML = html;
     bindQ1();
   }
 
   function renderFollowup(qIndex) {
     const q = QUESTIONS[qIndex];
     const stepNum = qIndex + 2; // Q2 entspricht Step 2
-    const total = TOTAL_STEPS;
-    const html = `
+    renderChrome(stepNum);
+    frame.innerHTML = `
       <div class="screen active">
-        ${renderProgress(stepNum)}
         <h1 class="q-heading">${q.headline[0]} <span class="accent">${q.headline[1]}</span></h1>
         <p class="q-sub">${q.sub}</p>
         <div class="answer-list">
           ${q.options.map((opt, i) => `
             <button type="button" class="answer-row" data-score="${opt.score}" data-idx="${i}">
-              <div class="letter">${opt.letter}</div>
-              <div class="text">${opt.text}</div>
+              <span class="light"></span>
+              <span class="text">${opt.text}</span>
+              <span class="rev">${[0, 1, 2].map(b => `<i class="${b <= i ? 'on' : ''}"></i>`).join('')}</span>
             </button>
           `).join('')}
         </div>
         <div class="screen-footer">
           <button type="button" class="btn-back" data-back>← zurück</button>
-          <span>Frage ${stepNum} von ${total}</span>
+          <span>Sektor ${pad(stepNum)} / ${pad(TOTAL_STEPS)}</span>
         </div>
         <div class="keyhint">Tasten <kbd>1</kbd> <kbd>2</kbd> <kbd>3</kbd> · <kbd>←</kbd> zurück</div>
       </div>
     `;
-    frame.innerHTML = html;
     bindFollowup();
   }
 
   function renderResult() {
     const r = resolveOutcome(state.selfPick, state.answers);
-    const html = `
+    const value = scoreToValue(r.score);
+    renderChrome(TOTAL_STEPS, true);
+    frame.innerHTML = `
       <div class="screen active">
         <div class="result">
-          <div class="stamp ${r.level}"><span class="dot"></span>Dein Level</div>
+          ${renderGauge(value)}
+          <div class="zones">
+            <span class="${r.level === 'anf' ? 'on' : ''}">Anfänger</span>
+            <span class="${r.level === 'fg'  ? 'on' : ''}">Fortgeschritten</span>
+            <span class="${r.level === 'exp' ? 'on' : ''}">Experte</span>
+          </div>
+          <div class="stamp ${r.level}">
+            <span class="tag">${LEVELS[r.level].short}</span>
+            <span class="txt">Dein Level</span>
+          </div>
           <h1 class="headline">${formatHeadline(r.headline, r.level)}</h1>
           ${r.qualifier ? `<p class="qualifier">${r.qualifier}</p>` : ''}
           <p class="body">${r.body}</p>
-          <div class="cta-stack">
+          <div class="metaline">Selbst-Check · ${pad(TOTAL_STEPS)} Fragen · ${LEVELS[r.level].name} · ${value} / 100</div>
+          <div class="cta-row">
             <a class="cta-primary" href="${AKADEMIE_URL}" target="_top" rel="noopener">
-              Zum Kursfinder <span class="arrow">→</span>
+              <span class="dot"></span>Zum Kursfinder <span class="ar">→</span>
             </a>
-            <div class="cta-secondary-row">
-              <button type="button" class="btn-secondary" data-restart>Test wiederholen</button>
-              <button type="button" class="btn-secondary" data-share>Ergebnis teilen</button>
-            </div>
+            <button type="button" class="btn-secondary" data-share>Ergebnis teilen</button>
           </div>
+          <button type="button" class="cta-note" data-restart>oder <b>den Test wiederholen</b> ↺</button>
         </div>
       </div>
     `;
-    frame.innerHTML = html;
     bindResult(r);
+  }
+
+  // ===========================================================
+  // Tacho — das Logo-Motiv der Marke als Auswertung.
+  // Schwarzer Bogen: erreicht. Roter Bogen: der nächste Schritt.
+  // Zwei feine Marken zeigen, wo die Level-Zonen anfangen.
+  // ===========================================================
+
+  const G = { cx: 100, cy: 110, r: 80 };   // Halbkreis, Mittelpunkt unten
+
+  function gaugePoint(pct, radius) {
+    const rad = Math.PI * (1 - pct / 100);
+    return [G.cx + radius * Math.cos(rad), G.cy - radius * Math.sin(rad)];
+  }
+
+  function gaugeArc(fromPct, toPct, radius) {
+    const [x1, y1] = gaugePoint(fromPct, radius);
+    const [x2, y2] = gaugePoint(toPct, radius);
+    // Der ganze Tacho umspannt 180°, jeder Teilbogen ist also nie größer
+    // als ein Halbkreis — large-arc-flag muss durchgehend 0 bleiben.
+    return `M${x1.toFixed(2)} ${y1.toFixed(2)} A${radius} ${radius} 0 0 1 ${x2.toFixed(2)} ${y2.toFixed(2)}`;
+  }
+
+  function gaugeTick(pct) {
+    const [x1, y1] = gaugePoint(pct, G.r - 8);
+    const [x2, y2] = gaugePoint(pct, G.r + 8);
+    return `<line x1="${x1.toFixed(2)}" y1="${y1.toFixed(2)}" x2="${x2.toFixed(2)}" y2="${y2.toFixed(2)}"
+              stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round"/>`;
+  }
+
+  function renderGauge(value) {
+    const v = Math.max(0, Math.min(100, value));
+    // Bei 0 bzw. 100 entfällt einer der beiden Bögen — sonst zeichnet SVG einen Punkt.
+    const reached = v > 0.5  ? `<path d="${gaugeArc(0, v, G.r)}" fill="none" stroke="#1F1F1F" stroke-width="15" stroke-linecap="round"/>` : '';
+    const ahead   = v < 99.5 ? `<path d="${gaugeArc(v, 100, G.r)}" fill="none" stroke="#FF1A1A" stroke-width="15" stroke-linecap="round"/>` : '';
+    return `
+      <div class="gauge">
+        <svg viewBox="0 0 200 119" role="img" aria-label="Dein Wert: ${v} von 100">
+          <path d="${gaugeArc(0, 100, G.r)}" fill="none" stroke="#E4E7EC" stroke-width="15" stroke-linecap="round"/>
+          ${reached}
+          ${ahead}
+          ${gaugeTick(ZONE_FG)}
+          ${gaugeTick(ZONE_EXP)}
+        </svg>
+        <div class="v">${v}</div>
+        <div class="l">von 100</div>
+      </div>
+    `;
   }
 
   function formatHeadline(text, levelCls) {
@@ -741,14 +822,34 @@
     return text;
   }
 
-  function renderProgress(stepNum) {
-    const pct = (stepNum / TOTAL_STEPS) * 100;
-    return `
-      <div class="progress">
-        <span class="step">Schritt ${stepNum} / ${TOTAL_STEPS}</span>
-        <div class="bar"><div class="fill" style="width: ${pct}%"></div></div>
-      </div>
+  // ===========================================================
+  // Kopfleiste (Timing-Tower) + Sektorleiste
+  // ===========================================================
+
+  const head    = document.getElementById('tt-head');
+  const sectors = document.getElementById('sectors');
+
+  const pad = n => String(n).padStart(2, '0');
+
+  function renderChrome(stepNum, finish = false) {
+    // Startampel: ein Licht pro Drittel des Wegs.
+    const lights = finish
+      ? '<span class="sl flag"></span>'
+      : `<span class="sl">${[1, 2, 3]
+          .map(i => `<i class="${stepNum / TOTAL_STEPS >= i / 3 ? 'on' : ''}"></i>`)
+          .join('')}</span>`;
+
+    head.className = 'tt-head' + (finish ? ' finish' : '');
+    head.innerHTML = `
+      <span class="tt-l">${lights}${finish ? 'Zielflagge' : 'Level-Test'}</span>
+      <span class="tt-r">${finish ? '<b>Ergebnis</b>' : `<b>${pad(stepNum)}</b> / ${pad(TOTAL_STEPS)}`}</span>
     `;
+
+    sectors.innerHTML = Array.from({ length: TOTAL_STEPS }, (_, i) => {
+      const n = i + 1;
+      const cls = finish || n < stepNum ? 'done' : (n === stepNum ? 'now' : '');
+      return `<span class="${cls}"></span>`;
+    }).join('');
   }
 
   // ===========================================================
